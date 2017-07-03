@@ -3,6 +3,7 @@ from discord.ext import commands
 import json
 import sys
 import os
+from utils import prettyoutput as po
 
 bot = discord.Client()
 
@@ -13,18 +14,19 @@ def update_file():
 def import_config():
   global config
   try:
-    print("Importing configuration...")
+    print(po.info(string="Importing configuration...", prn_out=False))
     with open('config.json', 'r') as file_in:
       config = json.load(file_in)
   except FileNotFoundError:
-    print("Config file not found, creating...")
+    print(po.error(string="Config file not found, creating...", prn_out=False))
     with open('config.json', 'w+') as file_out:
       config_temp = {"token": "", "admin_ids": [""], "servers": [{}]}
       json.dump(config_temp, file_out, indent=2, sort_keys=True)
-    print("Please put your bot's token in the 'token' key in config.json")
+    print(po.error(string="Please put your bot's token in the 'token' key in config.json", prn_out=False))
     sys.exit()
 
 def add_cogs():
+  print(po.info(string="Getting all extensions in the cogs folder...", prn_out=False))
   startup_extensions = []
   for cog in os.popen('ls cogs/').split('\n'):
     startup_extensions.append("cogs." + cog.split('.')[0])
@@ -32,26 +34,28 @@ def add_cogs():
 
 @bot.event
 async def on_ready():
-  print('Logged in as')
+  print(po.success(string='Logged into discord', prn_out=False))
   print(bot.user.name)
   print(bot.user.id)
   print('------')
 
-  await bot.change_presence(game=discord.Game(name='"[help" for help'))
+  await bot.change_presence(game=discord.Game(name='Alpha Bot indev'))
 
   for extension in add_cogs():
+    print(po.info(string="Loading {}...".format(extension), prn_out=False))
     try:
       bot.load_extension(extension)
     except Exception as e:
       exc = '{}: {}'.format(type(e).__name__, e)
-      print('Failed to load extension {}\n{}'.format(extension, exc))
+      print(po.error(string='Failed to load extension {}\n{}'.format(extension, exc), prn_out=False))
+  print(po.success(string="All extensions loaded successfully", prn_out=False))
 
 if __name__ == '__main__':
   import_config()
   try:
     bot.run(config['token'])
   except discord.errors.LoginFailure as e:
-    print(str(e))
+    print(po.error(string=str(e), prn_out=False))
     sys.exit()
   except Exception as e:
-    print(type(e).__name__ + ": " + str(e))
+    print(po.error(string=type(e).__name__ + ": " + str(e), prn_out=False))
