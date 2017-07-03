@@ -113,7 +113,7 @@ async def reload_module(ctx, module):
       await bot.say('Module {} reloaded!'.format(module))
       await logging("info", "Module{} reloaded".format(module))
 
-@bot.command("unload", hidden=True. pass_context=True)
+@bot.command("unload", hidden=True, pass_context=True)
 async def unload_module(ctx, module):
   if ctx.message.author.id in config['admin_ids']:
     bot.unload_extension(module)
