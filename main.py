@@ -64,7 +64,7 @@ async def add_cogs():
   await logging("info", "Getting all extensions in the cogs folder...")
   startup_extensions = []
   for cog in os.popen('ls cogs/').read().split('\n'):
-    if not cog == "":
+    if not cog == "" and not cog.startswith('.'):
       startup_extensions.append("cogs." + cog.split('.')[0])
   return startup_extensions
 
