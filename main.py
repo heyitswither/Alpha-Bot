@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import asyncio
 
 import discord
 from discord.ext import commands
@@ -9,6 +10,13 @@ from utils import prettyoutput as po
 
 bot = commands.Bot(command_prefix="a|")
 
+async def startup():
+  global config
+  config = await import_config()
+  if config['log_channel_id'] == "":
+    logging(
+        "info", "No log channel set, all status messages will be printed to the console.")
+    logging("info", "Logging into discord")
 
 async def logging(log_type="none", contents=""):
   global config
@@ -34,22 +42,22 @@ def update_file():
     json.dump(config, fileOut, indent=2, sort_keys=True)
 
 
-def import_config():
+async def import_config():
   try:
-    logging("info", "Importing configuration...")
+    await logging("info", "Importing configuration...")
     with open('config.json', 'r') as file_in:
       return json.load(file_in)
   except FileNotFoundError:
-    logging("error", "Config file not found, creating...")
+    await logging("error", "Config file not found, creating...")
     with open('config.json', 'w+') as file_out:
       config_temp = {"token": "", "admin_ids": [""], "servers": [{}]}
       json.dump(config_temp, file_out, indent=2, sort_keys=True)
-    logging("error", "Please put your bot's token in the 'token' key in config.json")
+    await logging("error", "Please put your bot's token in the 'token' key in config.json")
     sys.exit()
 
 
-def add_cogs():
-  logging("info", "Getting all extensions in the cogs folder...")
+async def add_cogs():
+  await logging("info", "Getting all extensions in the cogs folder...")
   startup_extensions = []
   for cog in os.popen('ls cogs/').read().split('\n'):
     if not cog == "":
@@ -69,7 +77,7 @@ async def on_ready():
 
   await bot.change_presence(game=discord.Game(name='Alpha Bot indev'))
 
-  for extension in add_cogs():
+  for extension in await add_cogs():
     await logging("info", "Loading {}...".format(extension))
     try:
       bot.load_extension(extension)
@@ -91,19 +99,27 @@ async def reload_module(ctx, module):
   global config
   if ctx.message.author.id in config['admin_ids']:
     bot.unload_extension(module)
-    bot.load_extension(module)
-    await bot.say("done")
+    try:
+      bot.load_extension(module)
+    except ModuleNotFoundError:
+      await bot.say('Module "{}" not found'.format(module))
+    except discord.errors.ClientException:
+      await bot.say('Error reloading module "{}"'.format(module))
+    else:
+      await bot.say('Module {} reloaded!'.format(module))
+      await logging("info", "{} reloaded".format(module))
+
+@bot.command(name="test", pass_context=True)
+async def test_command(ctx):
+  await bot.say(ctx.message.author.mention + " tested")
 
 if __name__ == '__main__':
-  config = import_config()
-  if config['log_channel_id'] == "":
-    logging(
-        "info", "No log channel set, all status messages will be printed to the console.")
+  loop = asyncio.get_event_loop()
+  loop.run_until_complete(asyncio.gather(startup()))
   try:
-    logging("info", "Logging into discord")
     bot.run(config['token'])
   except discord.errors.LoginFailure as e:
     logging("error", str(e))
     sys.exit()
   except Exception as e:
-    logging("error", type(e).__name__ + ": " + str(e))
+    print(type(e).__name__ + ": " + str(e))
