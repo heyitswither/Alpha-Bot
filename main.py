@@ -2,6 +2,7 @@ import asyncio
 import json
 import os
 import sys
+from datetime import datetime
 
 import discord
 from discord.ext import commands
@@ -15,16 +16,17 @@ async def startup():
   global config
   config = await import_config()
   if config['log_channel_id'] == "":
-    logging(
+    await logging(
         "info", "No log channel set, all status messages will be printed to the console.")
-    logging("info", "Logging into discord")
+  await logging("info", "Logging into discord...")
 
 
 async def logging(log_type="none", contents=""):
   global config
   try:
-    if not config['log_channel_id'] == "":
-      await bot.send_message(bot.get_channel(config['log_channel_id']), contents)
+    if not config['log_channel_id'] == "" and bot.is_logged_in:
+      log_embed = discord.Embed(description=contents, timestamp=datetime.now())
+      await bot.send_message(bot.get_channel(config['log_channel_id']), embed=log_embed)
   except NameError:
     pass
   if log_type == "info":
