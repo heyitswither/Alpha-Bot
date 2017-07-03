@@ -5,7 +5,7 @@ import sys
 import os
 from utils import prettyoutput as po
 
-bot = discord.Client()
+bot = commands.Bot(command_prefix="")
 
 def update_file():
   with open('config.json', 'w') as fileOut:
@@ -28,14 +28,15 @@ def import_config():
 def add_cogs():
   print(po.info(string="Getting all extensions in the cogs folder...", prn_out=False))
   startup_extensions = []
-  for cog in os.popen('ls cogs/').split('\n'):
-    startup_extensions.append("cogs." + cog.split('.')[0])
+  for cog in os.popen('ls cogs/').read().split('\n'):
+    if not cog == "":
+      startup_extensions.append("cogs." + cog.split('.')[0])
   return startup_extensions
 
 @bot.event
 async def on_ready():
   print(po.success(string='Logged into discord', prn_out=False))
-  print(bot.user.name)
+  print(bot.user.name + "#" + bot.user.discriminator)
   print(bot.user.id)
   print('------')
 
