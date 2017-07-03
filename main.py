@@ -71,11 +71,10 @@ async def add_cogs():
 
 @bot.event
 async def on_ready():
-  await logging("success", 'Successfully logged into discord')
-  await logging("info", "{}#{} ({})".format(bot.user.name, bot.user.discriminator, bot.user.id))
+  await logging("success", 'Successfully logged into discord as\n\t\t{}#{} ({})'.format(bot.user.name, bot.user.discriminator, bot.user.id))
   if not config['log_channel_id'] == "":
     try:
-      await logging("info", 'Console messages will be send to channel #{} ({}) in {} ({})'.format(bot.get_channel(config['log_channel_id']).name, bot.get_channel(config['log_channel_id']).id, bot.get_channel(config['log_channel_id']).server.name, bot.get_channel(config['log_channel_id']).server.id))
+      await logging("info", 'Console messages will be send to channel #{} \n\t\t({}) in {} ({})'.format(bot.get_channel(config['log_channel_id']).name, bot.get_channel(config['log_channel_id']).id, bot.get_channel(config['log_channel_id']).server.name, bot.get_channel(config['log_channel_id']).server.id))
     except AttributeError:
       await logging("error", 'The bot could not access the log channel')
 
@@ -113,6 +112,7 @@ async def reload_module(ctx, module):
       await bot.say('Module {} reloaded!'.format(module))
       await logging("info", "Module{} reloaded".format(module))
 
+
 @bot.command("unload", hidden=True, pass_context=True)
 async def unload_module(ctx, module):
   if ctx.message.author.id in config['admin_ids']:
@@ -120,14 +120,17 @@ async def unload_module(ctx, module):
     await bot.say('Module {} unloaded!'.format(module))
     await logging("info", "Module {} unloaded".format(module))
 
+
 @bot.event
 async def on_command_error(exception, context):
   if type(exception) == discord.ext.commands.errors.CommandNotFound:
     return
   message = context.message
-  tb = ''.join(traceback.format_exception(type(exception), exception, exception.__traceback__))
-  reply = "COMMAND **{}** IN **{}** ({})".format(message.content, message.server.name, message.server.id)
-  reply += "\n```py\n{}```".format(tb[len(reply)-1988:])
+  tb = ''.join(traceback.format_exception(
+      type(exception), exception, exception.__traceback__))
+  reply = "COMMAND **{}** IN **{}** ({})".format(
+      message.content, message.server.name, message.server.id)
+  reply += "\n```py\n{}```".format(tb[len(reply) - 1988:])
   await logging("error", "reply")
 
 if __name__ == '__main__':
