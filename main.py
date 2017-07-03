@@ -111,12 +111,14 @@ async def reload_module(ctx, module):
       await bot.say('Error reloading module "{}"'.format(module))
     else:
       await bot.say('Module {} reloaded!'.format(module))
-      await logging("info", "{} reloaded".format(module))
+      await logging("info", "Module{} reloaded".format(module))
 
-
-@bot.command(name="test", pass_context=True)
-async def test_command(ctx):
-  await bot.say(ctx.message.author.mention + " tested")
+@bot.command("unload", hidden=True. pass_context=True)
+async def unload_module(ctx, module):
+  if ctx.message.author.id in config['admin_ids']:
+    bot.unload_extension(module)
+    await bot.say('Module {} unloaded!'.format(module))
+    await logging("info", "Module {} unloaded".format(module))
 
 if __name__ == '__main__':
   loop = asyncio.get_event_loop()
