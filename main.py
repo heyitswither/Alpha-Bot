@@ -120,6 +120,16 @@ async def unload_module(ctx, module):
     await bot.say('Module {} unloaded!'.format(module))
     await logging("info", "Module {} unloaded".format(module))
 
+@bot.event
+async def on_command_error(exception, context):
+  if type(exception) == discord.ext.commands.errors.CommandNotFound:
+    return
+  message = context.message
+  tb = ''.join(traceback.format_exception(type(exception), exception, exception.__traceback__))
+  reply = "COMMAND **{}** IN **{}** ({})".format(message.content, message.server.name, message.server.id)
+  reply += "\n```py\n{}```".format(tb[len(reply)-1988:])
+  await logging("error", "reply")
+
 if __name__ == '__main__':
   loop = asyncio.get_event_loop()
   loop.run_until_complete(asyncio.gather(startup()))
