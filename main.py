@@ -71,12 +71,13 @@ async def add_cogs():
 
 @bot.event
 async def on_ready():
-  await logging("success", 'Successfully logged into discord as\n\t\t{}#{} ({})'.format(bot.user.name, bot.user.discriminator, bot.user.id))
   if not config['log_channel_id'] == "":
     try:
       await logging("info", 'Console messages will be send to channel #{} \n\t\t({}) in {} ({})'.format(bot.get_channel(config['log_channel_id']).name, bot.get_channel(config['log_channel_id']).id, bot.get_channel(config['log_channel_id']).server.name, bot.get_channel(config['log_channel_id']).server.id))
     except AttributeError:
-      await logging("error", 'The bot could not access the log channel')
+      config['log_channel_id'] = ""
+      await logging("error", "The bot cannot access the log channel")
+  await logging("success", 'Successfully logged into discord as\n\t\t{}#{} ({})'.format(bot.user.name, bot.user.discriminator, bot.user.id))
 
   await bot.change_presence(game=discord.Game(name='Alpha Bot indev'))
 
