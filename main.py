@@ -1,7 +1,7 @@
+import asyncio
 import json
 import os
 import sys
-import asyncio
 
 import discord
 from discord.ext import commands
@@ -10,6 +10,7 @@ from utils import prettyoutput as po
 
 bot = commands.Bot(command_prefix="a|")
 
+
 async def startup():
   global config
   config = await import_config()
@@ -17,6 +18,7 @@ async def startup():
     logging(
         "info", "No log channel set, all status messages will be printed to the console.")
     logging("info", "Logging into discord")
+
 
 async def logging(log_type="none", contents=""):
   global config
@@ -109,6 +111,7 @@ async def reload_module(ctx, module):
       await bot.say('Module {} reloaded!'.format(module))
       await logging("info", "{} reloaded".format(module))
 
+
 @bot.command(name="test", pass_context=True)
 async def test_command(ctx):
   await bot.say(ctx.message.author.mention + " tested")
@@ -119,7 +122,7 @@ if __name__ == '__main__':
   try:
     bot.run(config['token'])
   except discord.errors.LoginFailure as e:
-    logging("error", str(e))
+    print(str(e))
     sys.exit()
   except Exception as e:
     print(type(e).__name__ + ": " + str(e))
