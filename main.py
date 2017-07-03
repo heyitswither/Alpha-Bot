@@ -6,6 +6,7 @@ import os
 from utils import prettyoutput as po
 
 bot = commands.Bot(command_prefix="")
+config = None
 
 def update_file():
   with open('config.json', 'w') as fileOut:
@@ -35,10 +36,16 @@ def add_cogs():
 
 @bot.event
 async def on_ready():
+  global config
   print(po.success(string='Logged into discord', prn_out=False))
   print(bot.user.name + "#" + bot.user.discriminator)
   print(bot.user.id)
   print('------')
+  if not config['log_channel_id'] == "":
+    try:
+      print('Console messages will be send to channel #{} ({}) in {} ({})'.format(bot.get_channel(config['log_channel_id']).name, bot.get_channel(config['log_channel_id']).id, bot.get_channel(config['log_channel_id']).server.name, bot.get_channel(config['log_channel_id']).server.id))
+    except AttributeError:
+      print(po.error(string='The bot could not access the log channel', prn_out=False))
 
   await bot.change_presence(game=discord.Game(name='Alpha Bot indev'))
 
@@ -51,8 +58,23 @@ async def on_ready():
       print(po.error(string='Failed to load extension {}\n{}'.format(extension, exc), prn_out=False))
   print(po.success(string="All extensions loaded successfully", prn_out=False))
 
+
+@bot.event
+async def on_message(message):
+  await bot.process_commands(message)
+
+# defined here so it can't be accidentally unloaded
+@bot.command(name="reload", hidden=True, pass_context=True)
+async def reload_module(ctx, module):
+  if ctx.message.author.id == '135483608491229184' or ctx.message.author.id == '135496683009081345':
+    bot.unload_extension(module)
+    bot.load_extension(module)
+    await bot.say("done")
+
 if __name__ == '__main__':
   import_config()
+  if config['log_channel_id'] == "":
+    print("No log channel set, all status messages will be printed to the console.")
   try:
     bot.run(config['token'])
   except discord.errors.LoginFailure as e:
