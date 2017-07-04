@@ -36,7 +36,7 @@ class Fun:
   async def urban_dictionary(self, ctx, *message):
     r = requests.get(
         "http://api.urbandictionary.com/v0/define?term={}".format(' '.join(message)))
-    r = json.loads(r.content)
+    r = json.loads(r.text)
     try:
       embed = discord.Embed(title="**Definition for {}**".format(
           r['list'][0]['word']), description=r['list'][0]['definition'], url=r['list'][0]['permalink'])
