@@ -14,8 +14,8 @@ class Info:
 
   @commands.command(name="info")
   async def bot_info(self):
-    info_embed = discord.Embed(
-        description="[**__Alpha Bot__**](https://discord.io/wither)")
+    info_embed = discord.Embed()
+    info_embed.set_author(name="Alpha Bot", url="https://discord.io/wither", icon_url=self.bot.user.avatar_url)
     info_embed.set_thumbnail(url=self.bot.user.avatar_url + "?size=128x128")
     info_embed.add_field(
         name="Description", value="The everything in one discord bot.", inline=False)
@@ -31,6 +31,8 @@ class Info:
     for member in self.bot.get_all_members():
       members += 1
     info_embed.add_field(name="Bot Users", value=members, inline=True)
+    info_embed.add_field(name="Bot Version", value="0.1 indev", inline=True)
+    info_embed.add_field(name="Bot Author", value="heyitswither#4340", inline=True)
     await self.bot.say(embed=info_embed)
 
   @commands.command(name="serverinfo", pass_context=True)
