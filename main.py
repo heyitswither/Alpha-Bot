@@ -10,8 +10,10 @@ from discord.ext import commands
 
 from utils import prettyoutput as po
 
-bot = commands.Bot(command_prefix="a|")
+description = "The everything in one discord bot"
+bot = commands.Bot(command_prefix="a|", description=description)
 bot.version = "0.4 indev"
+bot.voice_reload_cache = None
 
 
 async def startup():
