@@ -65,7 +65,7 @@ async def add_cogs():
   await logging("info", "Getting all extensions in the cogs folder...")
   startup_extensions = []
   for cog in os.popen('ls cogs/').read().split('\n'):
-    if not cog == "" and not cog.startswith('.'):
+    if not cog == "" and not cog.startswith('.') and not cog.startswith('_'):
       startup_extensions.append("cogs." + cog.split('.')[0])
   return startup_extensions
 
@@ -107,12 +107,19 @@ async def reload_module(ctx, module):
     try:
       bot.load_extension(module)
     except ModuleNotFoundError:
-      await bot.say('Module "{}" not found'.format(module))
+      try:
+        bot.load_extension("cogs." + module)
+      except ModuleNotFoundError:
+        await bot.say('Module "{}" not found'.format(module))
+      else:
+        await bot.say('Module {} reloaded!'.format(module))
+        await logging("info", "Module {} reloaded".format(module))
+        return
     except discord.errors.ClientException:
       await bot.say('Error reloading module "{}"'.format(module))
     else:
       await bot.say('Module {} reloaded!'.format(module))
-      await logging("info", "Module{} reloaded".format(module))
+      await logging("info", "Module {} reloaded".format(module))
 
 
 @bot.command("unload", hidden=True, pass_context=True)
