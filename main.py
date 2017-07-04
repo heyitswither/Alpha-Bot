@@ -106,17 +106,9 @@ async def reload_module(ctx, module):
     bot.unload_extension(module)
     try:
       bot.load_extension(module)
-    except ModuleNotFoundError:
-      try:
-        bot.load_extension("cogs." + module)
-      except ModuleNotFoundError:
-        await bot.say('Module "{}" not found'.format(module))
-      else:
-        await bot.say('Module {} reloaded!'.format(module))
-        await logging("info", "Module {} reloaded".format(module))
-        return
-    except discord.errors.ClientException:
-      await bot.say('Error reloading module "{}"'.format(module))
+    except Exception as e:
+      await bot.say(type(e).__name__ + ": " + str(e))
+      await logging("error", type(e).__name__ + ": " + str(e))
     else:
       await bot.say('Module {} reloaded!'.format(module))
       await logging("info", "Module {} reloaded".format(module))
