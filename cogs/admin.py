@@ -2,9 +2,11 @@
 tools for the bot admin
 """
 
+import os
+
 import discord
 from discord.ext import commands
-import os
+
 
 class Admin:
   def __init__(self, bot_):
@@ -21,10 +23,11 @@ class Admin:
     python = sys.executable
     os.execl(python, python, * sys.argv)
 
-  @commands.command(name="stop", hidden=True)
+  @commands.command(name="exit", hidden=True)
   async def stop(self):
     self.bot.say("Stopping bot...")
     sys.exit()
+
 
 def setup(bot):
   bot.add_cog(Admin(bot))

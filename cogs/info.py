@@ -17,11 +17,13 @@ class Info:
     info_embed = discord.Embed()
     info_embed.set_author(
         name="Alpha Bot", url="https://discord.io/wither", icon_url=self.bot.user.avatar_url)
-    info_embed.set_thumbnail(url=self.bot.user.avatar_url + "?size=128x128")
+
     info_embed.add_field(
         name="Description", value="The everything in one discord bot.", inline=False)
     info_embed.add_field(
         name="GitHub", value="https://github.com/heyitswither/Alpha-Bot", inline=False)
+    info_embed.add_field(
+        name="Donate", value="https://paypal.me/WitheredAway", inline=False)
     info_embed.add_field(
         name="Python", value="[{}](https://www.python.org/)".format(python_version(), inline=False))
     info_embed.add_field(
@@ -35,6 +37,7 @@ class Info:
     info_embed.add_field(name="Bot Version", value="0.1 indev", inline=True)
     info_embed.add_field(
         name="Bot Author", value="heyitswither#4340", inline=True)
+    info_embed.set_thumbnail(url=self.bot.user.avatar_url + "?size=128x128")
     await self.bot.say(embed=info_embed)
 
   @commands.command(name="serverinfo", pass_context=True)
