@@ -14,4 +14,5 @@ Everything in one discord bot, written in discord.py
 - [Here is a guide to writing your own cogs](https://twentysix26.github.io/Red-Docs/red_guide_make_cog/)
 - Any cogs can be put into the cogs folder and will be loaded when you run the bot.
 - To load a cog without restarting the bot, run this bot command:
+
   `!reload cog.name` where '!' is your bot's prefix and 'name' is the name of the cog file without the extension
