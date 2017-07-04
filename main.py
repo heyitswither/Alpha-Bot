@@ -2,8 +2,8 @@ import asyncio
 import json
 import os
 import sys
-from datetime import datetime
 import traceback
+from datetime import datetime
 
 import discord
 from discord.ext import commands
