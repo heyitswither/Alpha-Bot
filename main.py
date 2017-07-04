@@ -3,6 +3,7 @@ import json
 import os
 import sys
 from datetime import datetime
+import traceback
 
 import discord
 from discord.ext import commands
@@ -132,7 +133,7 @@ async def on_command_error(exception, context):
   reply = "COMMAND **{}** IN **{}** ({})".format(
       message.content, message.server.name, message.server.id)
   reply += "\n```py\n{}```".format(tb[len(reply) - 1988:])
-  await logging("error", "reply")
+  await logging("error", reply)
 
 if __name__ == '__main__':
   loop = asyncio.get_event_loop()
