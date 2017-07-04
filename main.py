@@ -11,6 +11,7 @@ from discord.ext import commands
 from utils import prettyoutput as po
 
 bot = commands.Bot(command_prefix="a|")
+bot.version = "0.4 indev"
 
 
 async def startup():

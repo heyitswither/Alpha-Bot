@@ -34,7 +34,7 @@ class Info:
     for member in self.bot.get_all_members():
       members += 1
     info_embed.add_field(name="Bot Users", value=members, inline=True)
-    info_embed.add_field(name="Bot Version", value="0.1 indev", inline=True)
+    info_embed.add_field(name="Bot Version", value=self.bot.version, inline=True)
     info_embed.add_field(
         name="Bot Author", value="heyitswither#4340", inline=True)
     info_embed.set_thumbnail(url=self.bot.user.avatar_url + "?size=128x128")
