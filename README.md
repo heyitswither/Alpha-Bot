@@ -16,3 +16,9 @@ Everything in one discord bot, written in discord.py
 - To load a cog without restarting the bot, run this bot command:
 
   `!reload cog.name` where '!' is your bot's prefix and 'name' is the name of the cog file without the extension
+
+
+## Dependancies
+
+- [Discord.py](https://github.com/Rapptz/discord.py)
+- [PrettyOutput](https://github.com/Aareon/prettyoutput)
