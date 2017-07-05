@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import time
 
 class Misc:
   def __init__(self, bot_):
@@ -22,6 +23,13 @@ class Misc:
         await self.bot.purge_from(ctx.message.channel, limit=count, check=self.clean_check)
       except discord.errors.Forbidden:
         await self.bot.say("I require the `Manage Messages` permission to perform this action.")
+
+  @commands.command(name="ping")
+  async def ping_command(self):
+    pingtime = time.time()
+    pingms = await self.bot.say("Pinging...")
+    ping = (time.time() - pingtime) * 1000
+    await self.bot.edit_message(pingms, "Ping ==> _**%.01f ms**_ :thumbsup:" % ping)
 
 def setup(bot):
   bot.add_cog(Misc(bot))

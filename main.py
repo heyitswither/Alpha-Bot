@@ -4,11 +4,15 @@ import os
 import sys
 import traceback
 from datetime import datetime
+import time
+import math
 
 import discord
 from discord.ext import commands
 
 from utils import prettyoutput as po
+
+start_time = time.time()
 
 try:
   description = "Alpha, the everything in one discord bot"
@@ -78,6 +82,7 @@ async def add_cogs():
 
 @bot.event
 async def on_ready():
+  global start_time
   if not config['log_channel_id'] == "":
     try:
       await logging("info", 'Console messages will be send to channel #{} \n\t\t({}) in {} ({})'.format(bot.get_channel(config['log_channel_id']).name, bot.get_channel(config['log_channel_id']).id, bot.get_channel(config['log_channel_id']).server.name, bot.get_channel(config['log_channel_id']).server.id))
@@ -95,7 +100,9 @@ async def on_ready():
     except Exception as e:
       exc = '{}: {}'.format(type(e).__name__, e)
       await logging("error", 'Failed to load extension {}\n{}'.format(extension, exc))
-  await logging("success", "All extensions loaded successfully")
+  await logging("success", "All extensions loaded")
+  end_time = time.time() - start_time
+  await logging("info", "Started in {} seconds ({} ms)".format(math.floor(end_time), math.floor(end_time * 1000)))
 
 
 @bot.event

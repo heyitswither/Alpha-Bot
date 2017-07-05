@@ -30,7 +30,7 @@ class Fun:
     if ctx.message.author.id in self.config['admin_ids']:
       await self.bot.say(' '.join(message))
     else:
-      await self.bot.say(ctx.message.author.mention + "said: " + ' '.join(message))
+      await self.bot.say(ctx.message.author.mention + " said: " + ' '.join(message))
 
   @commands.command(name="urban", pass_context=True)
   async def urban_dictionary(self, ctx, *message):
@@ -63,31 +63,20 @@ class Fun:
     """
     if number == "latest":
       r = requests.get('https://xkcd.com/info.0.json')
-      r = json.loads(r.text)
-      embed = discord.Embed(
-          title=r['safe_title'], description=r['alt'], url="https://xkcd.com/{}".format(r['num']))
-      embed.set_image(url=r['img'])
-      await self.bot.say(embed=embed)
     elif number == "random":
       r = requests.get('https://xkcd.com/info.0.json')
       r = json.loads(r.text)
       random_xkcd = random.randint(0, r['num'])
       r = requests.get('http://xkcd.com/{}/info.0.json'.format(random_xkcd))
-      r = json.loads(r.text)
-      embed = discord.Embed(
-          title=r['safe_title'], description=r['alt'], url="https://xkcd.com/{}".format(r['num']))
-      embed.set_image(url=r['img'])
-      await self.bot.say(embed=embed)
     else:
       r = requests.get('http://xkcd.com/{}/info.0.json'.format(number))
       if r.status_code == 404:
         await self.bot.say("Invalid xkcd number.")
-      else:
-        r = json.loads(r.text)
-        embed = discord.Embed(
-            title=r['safe_title'], description=r['alt'], url="https://xkcd.com/{}".format(r['num']))
-        embed.set_image(url=r['img'])
-        await self.bot.say(embed=embed)
+        return
+    r = json.loads(r.text)
+    embed = discord.Embed(title=r['safe_title'], description=r['alt'], url="https://xkcd.com/{}".format(r['num']))
+    embed.set_image(url=r['img'])
+    await self.bot.say(embed=embed)
 
 
 def setup(bot):
