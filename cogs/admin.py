@@ -3,6 +3,7 @@ tools for the bot admin
 """
 
 import os
+import sys
 
 import discord
 from discord.ext import commands

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 - Need to fix versioning and add everything to this changelog
 
+## [0.0.1] - 2017-07-05
+### Fixed
+- Fixed exit command so that it actually works
+
 ## [0.0.0] - 2017-07-05
 ### Added
 - Added 'no results found' to Google command
