@@ -11,10 +11,10 @@ from discord.ext import commands
 from utils import prettyoutput as po
 
 description = "The everything in one discord bot"
-bot = commands.Bot(command_prefix="a|", description=description)
+with open('config.json') as file_in:
+  bot = commands.Bot(command_prefix=json.load(file_in)['prefix'], description=description)
 bot.version = "0.4 indev"
 bot.voice_reload_cache = None
-
 
 async def startup():
   global config
@@ -58,9 +58,9 @@ async def import_config():
   except FileNotFoundError:
     await logging("error", "Config file not found, creating...")
     with open('config.json', 'w+') as file_out:
-      config_temp = {"token": "", "admin_ids": [""], "servers": [{}]}
+      config_temp = {"token": "", "admin_ids": [""], "servers": [{}], "log_channel_id": "", "prefix": ""}
       json.dump(config_temp, file_out, indent=2, sort_keys=True)
-    await logging("error", "Please put your bot's token in the 'token' key in config.json")
+    await logging("error", "Please put your bot's information in config.json")
     sys.exit()
 
 

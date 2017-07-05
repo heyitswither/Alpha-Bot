@@ -7,7 +7,6 @@ from random import shuffle
 from discord.ext import commands
 from discord import opus
 import youtube_dl
-#import pynacl
 
 
 class Song:
@@ -142,7 +141,7 @@ class VoiceClient:
 
 class Voice:
     def __init__(self, bot_):
-        opus.load_opus("extras/opus.so")
+        #opus.load_opus("extras/opus.so")
         self.bot = bot_
         self.voice_clients = {}
         if self.bot.voice_reload_cache is not None:
@@ -151,14 +150,6 @@ class Voice:
 
     def __unload(self):
         self.bot.voice_reload_cache = self.voice_clients
-
-    '''
-    @commands.group(pass_context=True)
-    async def voice(self, context):
-        if not context.invoked_subcommand:
-            context.invoked_with = "help"
-            await commands.bot._default_help_command(context, "voice")
-    '''
 
     @commands.command(name="play", aliases=['add', 'p'], pass_context=True)
     async def voice_play(self, context, *song: str):
