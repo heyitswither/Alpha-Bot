@@ -37,9 +37,13 @@ class Misc:
   async def google(self, ctx, *query):
     r = requests.get('https://www.googleapis.com/customsearch/v1?key=AIzaSyDu7_tL50kfEcegjXnYqfBxXrKqBrknkkY&cx=013036536707430787589:_pqjad5hr1a&q={}&alt=json'.format(' '.join(query)))
     r = json.loads(r.text)
-    embed = discord.Embed(title=r['items'][0]['title'], description="{}\n\n[View More Results](https://www.google.com/search?q={})".format(r['items'][0]['snippet'], ' '.join(query).replace(' ', '+')), url=r['items'][0]['link'])
+    try:
+      embed = discord.Embed(title=r['items'][0]['title'], description="{}\n\n[View More Results](https://www.google.com/search?q={})".format(r['items'][0]['snippet'], ' '.join(query).replace(' ', '+')), url=r['items'][0]['link'])
+      embed.set_image(url=r['items'][0]['pagemap']['cse_thumbnail'][0]['src'])
+    except KeyError:
+      embed = discord.Embed(title=":warning: No results found")
     embed.set_author(name="{} - Google Search".format(' '.join(query)), icon_url='https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1000px-Google_%22G%22_Logo.svg.png')
-    embed.set_image(url=r['items'][0]['pagemap']['cse_thumbnail'][0]['src'])
+
     embed.set_footer(text="About {} results ({} seconds)".format(r['searchInformation']['formattedTotalResults'], r['searchInformation']['formattedSearchTime']))
     await self.bot.say(embed=embed)
 
