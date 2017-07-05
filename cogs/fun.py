@@ -52,6 +52,43 @@ class Fun:
       embed.add_field(name="Tags", value=' '.join(r['tags']), inline=False)
       await self.bot.say(embed=embed)
 
+  @commands.command(name="xkcd")
+  async def get_xkcd(self, number = "random"):
+    """
+    Retrieves a xkcd comic, from a number, random, or latest
+
+    xkcd <number> for that xkcd number
+    xkcd random for a random xkcd
+    xkcd latest for the latest xkcd
+    """
+    if number == "latest":
+      r = requests.get('https://xkcd.com/info.0.json')
+      r = json.loads(r.text)
+      embed = discord.Embed(
+          title=r['safe_title'], description=r['alt'], url="https://xkcd.com/{}".format(r['num']))
+      embed.set_image(url=r['img'])
+      await self.bot.say(embed=embed)
+    elif number == "random":
+      r = requests.get('https://xkcd.com/info.0.json')
+      r = json.loads(r.text)
+      random_xkcd = random.randint(0, r['num'])
+      r = requests.get('http://xkcd.com/{}/info.0.json'.format(random_xkcd))
+      r = json.loads(r.text)
+      embed = discord.Embed(
+          title=r['safe_title'], description=r['alt'], url="https://xkcd.com/{}".format(r['num']))
+      embed.set_image(url=r['img'])
+      await self.bot.say(embed=embed)
+    else:
+      r = requests.get('http://xkcd.com/{}/info.0.json'.format(number))
+      if r.status_code == 404:
+        await self.bot.say("Invalid xkcd number.")
+      else:
+        r = json.loads(r.text)
+        embed = discord.Embed(
+            title=r['safe_title'], description=r['alt'], url="https://xkcd.com/{}".format(r['num']))
+        embed.set_image(url=r['img'])
+        await self.bot.say(embed=embed)
+
 
 def setup(bot):
   bot.add_cog(Fun(bot))
