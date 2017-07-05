@@ -10,11 +10,14 @@ from discord.ext import commands
 
 from utils import prettyoutput as po
 
-description = "The everything in one discord bot"
-with open('config.json') as file_in:
-  bot = commands.Bot(command_prefix=json.load(file_in)['prefix'], description=description)
-bot.version = "0.4 indev"
-bot.voice_reload_cache = None
+try:
+    description = "The everything in one discord bot"
+  with open('config.json') as file_in:
+    bot = commands.Bot(command_prefix=json.load(file_in)['prefix'], description=description)
+  bot.version = "0.4 indev"
+  bot.voice_reload_cache = None
+except FileNotFoundError:
+  pass
 
 async def startup():
   global config
