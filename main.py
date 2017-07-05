@@ -17,7 +17,7 @@ try:
   bot.version = "0.4 indev"
   bot.voice_reload_cache = None
 except FileNotFoundError:
-  pass
+  bot = commands.Bot(command_prefix="")
 
 async def startup():
   global config
