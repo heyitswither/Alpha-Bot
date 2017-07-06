@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 - Need to add future plans
 
+## [0.9.3] - 2017-07-03 (2f90d5)
+### Fixed
+- Google command: doesn't try to add picture if it doesn't exist
+
 ## [0.9.2] - 2017-07-05 (3c4745)
 ### Changed
 - Added all past changes into this changelog
