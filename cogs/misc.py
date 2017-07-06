@@ -39,9 +39,12 @@ class Misc:
     r = json.loads(r.text)
     try:
       embed = discord.Embed(title=r['items'][0]['title'], description="{}\n\n[View More Results](https://www.google.com/search?q={})".format(r['items'][0]['snippet'], ' '.join(query).replace(' ', '+')), url=r['items'][0]['link'])
-      embed.set_image(url=r['items'][0]['pagemap']['cse_thumbnail'][0]['src'])
     except KeyError:
       embed = discord.Embed(title=":warning: No results found")
+    try:
+      embed.set_image(url=r['items'][0]['pagemap']['cse_thumbnail'][0]['src'])
+    except KeyError:
+      pass
     embed.set_author(name="{} - Google Search".format(' '.join(query)), icon_url='https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1000px-Google_%22G%22_Logo.svg.png')
 
     embed.set_footer(text="About {} results ({} seconds)".format(r['searchInformation']['formattedTotalResults'], r['searchInformation']['formattedSearchTime']))
