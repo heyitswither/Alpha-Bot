@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 - Need to add future plans
 
-## [0.10.1] - 2017-07-06 ()
+## [0.10.1] - 2017-07-06 (4d1a82)
 ### Added
 - Server mods can now change the bot's prefix with the prefix command
 

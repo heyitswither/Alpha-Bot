@@ -103,3 +103,6 @@ class Settings:
         else:
           await self.bot.say('{} is not a moderator'.format(mod))
         break
+
+def setup(bot):
+  bot.add_cog(Settings(bot))
