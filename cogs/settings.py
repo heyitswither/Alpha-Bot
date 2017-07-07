@@ -25,15 +25,15 @@ class Settings:
         break
     return False
 
-  @commands.group(name="module")
-  async def module_changes(self):
+  @commands.group()
+  async def module(self):
     pass
 
-  @module.command(name="enable", pass_context=True, check=self.is_mod)
+  @module.command(name="enable", pass_context=True, check=is_mod)
   async def enable_module(self, ctx, *module):
-  """
-  Enables a module in the current server
-  """
+    """
+    Enables a module in the current server
+    """
     for server in self.config['servers']:
       if server['id'] == ctx.message.server.id:
         if not module in server['enabled_modules']:
@@ -43,11 +43,11 @@ class Settings:
           await self.bot.say('{} is already enabled'.format(module))
         break
 
-  @module.command(name="disable", pass_context=True, check=self.is_mod)
+  @module.command(name="disable", pass_context=True, check=is_mod)
   async def disable_module(self, ctx, *module):
-  """
-  Disables a module in the current server
-  """
+    """
+    Disables a module in the current server
+    """
     for server in self.config['servers']:
       if server['id'] == ctx.message.server.id:
         if module in server['enabled_modules']:
@@ -57,27 +57,27 @@ class Settings:
           await self.bot.say('{} is already disabled'.format(module))
         break
 
-  @commands.command(name="prefix", pass_context=True, check=self.is_mod)
+  @commands.command(name="prefix", pass_context=True, check=is_mod)
   async def change_prefix(self, ctx, *new_prefix):
-  """
-  Changes the bot prefix for the current server
-  """
+    """
+    Changes the bot prefix for the current server
+    """
     for server in self.config['servers']:
       if server['id'] == ctx.message.server.id:
         server['prefix'] = new_prefix
         break
     await self.bot.say('Prefix set to {}'.format(new_prefix))
 
-  @commands.group(name="mod")
-  async def mod_changes():
+  @commands.group()
+  async def mod():
     pass
 
-  @mod.command(name="add", pass_context=True, check=self.is_mod)
+  @mod.command(name="add", pass_context=True, check=is_mod)
   async def add_mod(self, ctx, *mod):
     """
     Adds a user as a server mod (from mention or id)
     """
-    if not ctx.messsage.mentions = []:
+    if not ctx.messsage.mentions == []:
       mod = ctx.messsage.mentions[0].id
     for server in self.config['servers']:
       if server['id'] == ctx.message.server.id:
@@ -88,12 +88,12 @@ class Settings:
           await self.bot.say('{} is already a moderator'.format(mod))
         break
 
-  @mod.command(name="remove", pass_context=True, check=self.is_mod)
+  @mod.command(name="remove", pass_context=True, check=is_mod)
   async def add_mod(self, ctx, *mod):
     """
     Removes a user as a server mod (from mention or id)
     """
-    if not ctx.messsage.mentions = []:
+    if not ctx.messsage.mentions == []:
       mod = ctx.messsage.mentions[0].id
     for server in self.config['servers']:
       if server['id'] == ctx.message.server.id:

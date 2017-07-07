@@ -28,8 +28,6 @@ def get_prefix(bot, message):
 try:
   description = "Alpha, the everything in one discord bot"
   bot = commands.Bot(command_prefix=get_prefix, description=description)
-  with open('config.json') as file_in:
-    default_server_object = '{"id": "' + '{}' + '","enabled_modules": ["Fun","Info","Admin","Misc","Settings"],"prefix": "' + json.load(file_in)['prefix'] + '","mod_ids": []}'
   bot.version = "0.4 indev"
   bot.voice_reload_cache = None
 except FileNotFoundError:
@@ -95,7 +93,6 @@ async def add_cogs():
 @bot.event
 async def on_ready():
   global config
-  global default_server_object
   global start_time
   if not config['log_channel_id'] == "":
     try:
@@ -118,7 +115,7 @@ async def on_ready():
 
   for server in bot.servers:
     if not server.id in str(config['servers']):
-      config['servers'].append(default_server_object.format(server.id))
+      config['servers'].append({"id": server.id,"enabled_modules": ["Fun","Info","Admin","Misc","Settings"],"prefix": config['prefix'],"mod_ids": []}))
       update_file()
 
   for server in config['servers']:
@@ -136,9 +133,8 @@ async def on_message(message):
 
 @bot.event
 async def on_server_join(server):
-  global default_server_object
   global config
-  config['servers'].append(default_server_object.format(server.id))
+  config['servers'].append({"id": server.id,"enabled_modules": ["Fun","Info","Admin","Misc","Settings"],"prefix": config['prefix'],"mod_ids": []}))
   update_file()
 
 @bot.event

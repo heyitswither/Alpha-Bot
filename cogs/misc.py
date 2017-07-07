@@ -22,16 +22,16 @@ class Misc:
       return True
     return False
 
-    def module_check(self, context):
-      for server in self.config['servers']:
-        if server['id'] == context.message.server.id:
-          if context.cog(self).__name__ in server['enabled_modules']:
-            if context.command.name == "clean":
-              return clean_check(self, context)
-            else:
-              return True
-          break
-      return False
+  def module_check(self, context):
+    for server in self.config['servers']:
+      if server['id'] == context.message.server.id:
+        if context.cog(self).__name__ in server['enabled_modules']:
+          if context.command.name == "clean":
+            return clean_check(self, context)
+          else:
+            return True
+        break
+    return False
 
   @commands.command(name="clean", pass_context=True)
   async def clean_spam(self, ctx, count: int = -1):
@@ -46,14 +46,14 @@ class Misc:
       except discord.errors.Forbidden:
         await self.bot.say("I require the `Manage Messages` permission to perform this action.")
 
-  @commands.command(name="ping", check=self.module_check)
+  @commands.command(name="ping", check=module_check)
   async def ping_command(self):
     pingtime = time.time()
     pingms = await self.bot.say("Pinging...")
     ping = (time.time() - pingtime) * 1000
     await self.bot.edit_message(pingms, "Ping ==> _**%.01f ms**_ :thumbsup:" % ping)
 
-  @commands.command(name="google", pass_context=True, check=self.module_check)
+  @commands.command(name="google", pass_context=True, check=module_check)
   async def google(self, ctx, *query):
     r = requests.get('https://www.googleapis.com/customsearch/v1?key=AIzaSyDu7_tL50kfEcegjXnYqfBxXrKqBrknkkY&cx=013036536707430787589:_pqjad5hr1a&q={}&alt=json'.format(' '.join(query)))
     r = json.loads(r.text)
