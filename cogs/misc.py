@@ -13,6 +13,10 @@ class Misc:
     with open('config.json') as file_in:
       self.config = json.load(file_in)
 
+  def update_config(self):
+    with open('config.json', 'r') as file_in:
+      self.config = json.load(file_in)
+
   def clean_check(self, context):
     for server in config['servers']:
       if server['id'] == context.message.server.id:
@@ -23,9 +27,10 @@ class Misc:
     return False
 
   def module_check(self, context):
+    self.update_config()
     for server in self.config['servers']:
       if server['id'] == context.message.server.id:
-        if context.cog(self).__name__ in server['enabled_modules']:
+        if "Misc" in server['enabled_modules']:
           if context.command.name == "clean":
             return clean_check(self, context)
           else:
@@ -35,6 +40,7 @@ class Misc:
 
   @commands.command(name="clean", pass_context=True)
   async def clean_spam(self, ctx, count: int = -1):
+    if not self.module_check(ctx): return
     if count == -1:
       await self.bot.say("You need to include a number of messages to delete.")
     elif count > 200:
@@ -46,15 +52,17 @@ class Misc:
       except discord.errors.Forbidden:
         await self.bot.say("I require the `Manage Messages` permission to perform this action.")
 
-  @commands.command(name="ping", check=module_check)
-  async def ping_command(self):
+  @commands.command(name="ping", pass_context=True)
+  async def ping_command(self, ctx):
+    if not self.module_check(ctx): return
     pingtime = time.time()
     pingms = await self.bot.say("Pinging...")
     ping = (time.time() - pingtime) * 1000
     await self.bot.edit_message(pingms, "Ping ==> _**%.01f ms**_ :thumbsup:" % ping)
 
-  @commands.command(name="google", pass_context=True, check=module_check)
+  @commands.command(name="google", pass_context=True)
   async def google(self, ctx, *query):
+    if not self.module_check(ctx): return
     r = requests.get('https://www.googleapis.com/customsearch/v1?key=AIzaSyDu7_tL50kfEcegjXnYqfBxXrKqBrknkkY&cx=013036536707430787589:_pqjad5hr1a&q={}&alt=json'.format(' '.join(query)))
     r = json.loads(r.text)
     try:

@@ -19,28 +19,36 @@ class Fun:
     with open('config.json') as file_in:
       self.config = json.load(file_in)
 
+  def update_config(self):
+    with open('config.json', 'r') as file_in:
+      self.config = json.load(file_in)
+
   def module_check(self, context):
+    self.update_config()
     for server in self.config['servers']:
       if server['id'] == context.message.server.id:
-        if context.cog(self).__name__ in server['enabled_modules']:
+        if "Fun" in server['enabled_modules']:
           return True
     return False
 
-  @commands.command(name="8ball", check=module_check)
-  async def _8ball_command(self, *message):
+  @commands.command(name="8ball", pass_context=True)
+  async def _8ball_command(self, ctx, *message):
+    if not self.module_check(ctx): return
     embed = discord.Embed(title=":8ball:" + ' '.join(message),
                           description=random.choice(self._8ball_responses))
     await self.bot.say(embed=embed)
 
-  @commands.command(name="say", pass_context=True, check=module_check)
+  @commands.command(name="say", pass_context=True)
   async def say(self, ctx, *message):
+    if not self.module_check(ctx): return
     if ctx.message.author.id in self.config['admin_ids']:
       await self.bot.say(' '.join(message))
     else:
       await self.bot.say(ctx.message.author.mention + " said: " + ' '.join(message))
 
-  @commands.command(name="urban", pass_context=True, check=module_check)
+  @commands.command(name="urban", pass_context=True)
   async def urban_dictionary(self, ctx, *message):
+    if not self.module_check(ctx): return
     r = requests.get(
         "http://api.urbandictionary.com/v0/define?term={}".format(' '.join(message)))
     r = json.loads(r.text)
@@ -59,8 +67,8 @@ class Fun:
       embed.add_field(name="Tags", value=' '.join(r['tags']), inline=False)
       await self.bot.say(embed=embed)
 
-  @commands.command(name="xkcd", check=module_check)
-  async def get_xkcd(self, number = "random"):
+  @commands.command(name="xkcd", pass_context=True)
+  async def get_xkcd(self, ctx, number = "random"):
     """
     Retrieves a xkcd comic, from a number, random, or latest
 
@@ -68,6 +76,7 @@ class Fun:
     xkcd random for a random xkcd
     xkcd latest for the latest xkcd
     """
+    if not self.module_check(ctx): return
     if number == "latest":
       r = requests.get('https://xkcd.com/info.0.json')
     elif number == "random":

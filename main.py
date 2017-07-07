@@ -63,6 +63,7 @@ async def logging(log_type="none", contents=""):
 
 
 def update_file():
+  global config
   with open('config.json', 'w') as fileOut:
     json.dump(config, fileOut, indent=2, sort_keys=True)
 
@@ -114,12 +115,12 @@ async def on_ready():
   await logging("success", "All extensions loaded")
 
   for server in bot.servers:
-    if not server.id in str(config['servers']):
-      config['servers'].append({"id": server.id,"enabled_modules": ["Fun","Info","Admin","Misc","Settings"],"prefix": config['prefix'],"mod_ids": []}))
+    if not server.id in [server['id'] for server in config['servers']]:
+      config['servers'].append({"id": server.id,"enabled_modules": ["Fun","Info","Admin","Misc","Settings"],"prefix": config['prefix'],"mod_ids": []})
       update_file()
 
   for server in config['servers']:
-    if not server['id'] in str(bot.servers):
+    if not server['id'] in [server.id for server in bot.servers]:
       config['servers'].remove(server)
       update_file()
 
@@ -134,7 +135,7 @@ async def on_message(message):
 @bot.event
 async def on_server_join(server):
   global config
-  config['servers'].append({"id": server.id,"enabled_modules": ["Fun","Info","Admin","Misc","Settings"],"prefix": config['prefix'],"mod_ids": []}))
+  config['servers'].append({"id": server.id,"enabled_modules": ["Fun","Info","Admin","Misc","Settings"],"prefix": config['prefix'],"mod_ids": []})
   update_file()
 
 @bot.event
