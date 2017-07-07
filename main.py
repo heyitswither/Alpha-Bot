@@ -15,22 +15,25 @@ from utils import prettyoutput as po
 start_time = time.time()
 
 def get_prefix(bot, message):
-  with open('config.json') as file_in:
-    local_config = json.load(file_in)
-  for server in local_config['servers']:
-    if server['id'] == message.server.id:
-      return server['prefix']
-  return local_config['prefix']
+  try:
+    with open('config.json') as file_in:
+      local_config = json.load(file_in)
+    for server in local_config['servers']:
+      if server['id'] == message.server.id:
+        return server['prefix']
+    return local_config['prefix']
+  except FileNotFoundError:
+    return ""
 
 try:
   description = "Alpha, the everything in one discord bot"
   bot = commands.Bot(command_prefix=get_prefix, description=description)
   with open('config.json') as file_in:
-    default_server_object = '{"id": "{}","enabled_modules": ["Fun","Info","Admin","Misc","Settings"],"prefix": "{prefix}","mod_ids": []}'.format(prefix=json.load(file_in)['prefix'])
+    default_server_object = '{"id": "' + '{}' + '","enabled_modules": ["Fun","Info","Admin","Misc","Settings"],"prefix": "' + json.load(file_in)['prefix'] + '","mod_ids": []}'
   bot.version = "0.4 indev"
   bot.voice_reload_cache = None
 except FileNotFoundError:
-  bot = commands.Bot(command_prefix="")
+  pass
 
 async def startup():
   global config
