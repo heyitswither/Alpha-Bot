@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 - Need to add future plans
 
-## [0.10.0] - 2017-07-06 ()
+## [0.10.1] - 2017-07-06 ()
+### Added
+- Server mods can now change the bot's prefix with the prefix command
+
+## [0.10.0] - 2017-07-06 (748fc5)
 ### Added
 - Server moderators can be added using the mod command, mods can use server setting commands
 - Members with the 'admin' permission are automatically added as a mod
