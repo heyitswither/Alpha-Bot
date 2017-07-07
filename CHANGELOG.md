@@ -9,7 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 - Need to add future plans
 
-## [0.9.3] - 2017-07-03 (2f90d5)
+## [0.10.0] - 2017-07-06 ()
+### Added
+- Server moderators can be added using the mod command, mods can use server setting commands
+- Members with the 'admin' permission are automatically added as a mod
+- Modules can be enabled or disabled by server moderators
+- The prefix command has been added, but prefix changing will come soon
+### Changed
+- Some modules (only fun and misc for now) check if the module is enabled in the server object
+
+## [0.9.3] - 2017-07-06 (2f90d5)
 ### Fixed
 - Google command: doesn't try to add picture if it doesn't exist
 

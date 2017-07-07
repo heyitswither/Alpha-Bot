@@ -1,5 +1,5 @@
 """
-fun, not useful commands
+fun, somewhat useful commands
 """
 
 import json
@@ -19,20 +19,27 @@ class Fun:
     with open('config.json') as file_in:
       self.config = json.load(file_in)
 
-  @commands.command(name="8ball")
+  def module_check(self, context):
+    for server in self.config['servers']:
+      if server['id'] == context.message.server.id:
+        if context.cog(self).__name__ in server['enabled_modules']:
+          return True
+    return False
+
+  @commands.command(name="8ball", check=self.module_check)
   async def _8ball_command(self, *message):
     embed = discord.Embed(title=":8ball:" + ' '.join(message),
                           description=random.choice(self._8ball_responses))
     await self.bot.say(embed=embed)
 
-  @commands.command(name="say", pass_context=True)
+  @commands.command(name="say", pass_context=True, check=self.module_check)
   async def say(self, ctx, *message):
     if ctx.message.author.id in self.config['admin_ids']:
       await self.bot.say(' '.join(message))
     else:
       await self.bot.say(ctx.message.author.mention + " said: " + ' '.join(message))
 
-  @commands.command(name="urban", pass_context=True)
+  @commands.command(name="urban", pass_context=True, check=self.module_check)
   async def urban_dictionary(self, ctx, *message):
     r = requests.get(
         "http://api.urbandictionary.com/v0/define?term={}".format(' '.join(message)))
@@ -52,7 +59,7 @@ class Fun:
       embed.add_field(name="Tags", value=' '.join(r['tags']), inline=False)
       await self.bot.say(embed=embed)
 
-  @commands.command(name="xkcd")
+  @commands.command(name="xkcd", check=self.module_check)
   async def get_xkcd(self, number = "random"):
     """
     Retrieves a xkcd comic, from a number, random, or latest

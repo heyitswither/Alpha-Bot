@@ -18,6 +18,7 @@ try:
   description = "Alpha, the everything in one discord bot"
   with open('config.json') as file_in:
     bot = commands.Bot(command_prefix=json.load(file_in)['prefix'], description=description)
+    default_server_object = '{"id": "{}","enabled_modules": ["Fun","Info","Admin","Misc","Settings"],"prefix": "{prefix}","mod_ids": []}'.format(prefix=json.load(file_in)['prefix'])
   bot.version = "0.4 indev"
   bot.voice_reload_cache = None
 except FileNotFoundError:
@@ -82,6 +83,8 @@ async def add_cogs():
 
 @bot.event
 async def on_ready():
+  global config
+  global default_server_object
   global start_time
   if not config['log_channel_id'] == "":
     try:
@@ -101,6 +104,17 @@ async def on_ready():
       exc = '{}: {}'.format(type(e).__name__, e)
       await logging("error", 'Failed to load extension {}\n{}'.format(extension, exc))
   await logging("success", "All extensions loaded")
+
+  for server in bot.servers:
+    if not server.id in str(config['servers']):
+      config['servers'].append(default_server_object.format(server.id))
+      update_file()
+
+  for server in config['servers']:
+    if not server['id'] in str(bot.servers):
+      config['servers'].remove(server)
+      update_file()
+
   end_time = time.time() - start_time
   await logging("info", "Started in {} seconds ({} ms)".format(math.floor(end_time), math.floor(end_time * 1000)))
 
@@ -109,7 +123,20 @@ async def on_ready():
 async def on_message(message):
   await bot.process_commands(message)
 
-# defined here so it can't be accidentally unloaded
+@bot.event
+async def on_server_join(server):
+  global default_server_object
+  global config
+  config['servers'].append(default_server_object.format(server.id))
+  update_file()
+
+@bot.event
+async def on_server_leave(server):
+  global config
+  for server in config['servers']:
+    if server['id'] == server.id:
+      config['servers'].remove(server)
+  update_file()
 
 
 @bot.command(name="reload", hidden=True, pass_context=True)
