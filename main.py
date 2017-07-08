@@ -15,6 +15,9 @@ from utils import prettyoutput as po
 start_time = time.time()
 
 def get_prefix(bot, message):
+  for mention in message.mentions:
+    if mention == bot.user:
+      return bot.user.mention
   try:
     with open('config.json') as file_in:
       local_config = json.load(file_in)
@@ -27,7 +30,7 @@ def get_prefix(bot, message):
 
 try:
   description = "Alpha, the everything in one discord bot"
-  bot = commands.Bot(command_prefix=commands.when_mentioned_or(get_prefix), description=description)
+  bot = commands.Bot(command_prefix=get_prefix, description=description)
   bot.version = "0.10.1 indev"
   bot.voice_reload_cache = None
 except FileNotFoundError:
