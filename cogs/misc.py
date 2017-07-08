@@ -86,7 +86,7 @@ class Misc:
     suggestion = ' '.join(suggestion)
     embed = discord.Embed(title="New Suggestion", description=suggestion)
     embed.set_author(name=ctx.message.author.name + "#" + ctx.message.author.discriminator + "(" + ctx.message.author.id + ")")
-    await self.bot.send_message(self.bot.get_server('197780624688414720').get_channel('332616763294613505'), )
+    await self.bot.send_message(self.bot.get_server('197780624688414720').get_channel('332616763294613505'), embed=embed)
 
 def setup(bot):
   bot.add_cog(Misc(bot))
