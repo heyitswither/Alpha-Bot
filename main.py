@@ -85,7 +85,7 @@ async def import_config():
   except FileNotFoundError:
     await logging("error", "Config file not found, creating...")
     with open('config.json', 'w+') as file_out:
-      config_temp = {"token": "", "admin_ids": [""], "servers": [{}], "log_channel_id": "", "prefix": ""}
+      config_temp = {"token": "", "admin_ids": [""], "servers": [], "log_channel_id": "", "prefix": ""}
       json.dump(config_temp, file_out, indent=2, sort_keys=True)
     await logging("error", "Please put your bot's information in config.json")
     sys.exit()
