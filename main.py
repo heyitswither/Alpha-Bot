@@ -94,11 +94,7 @@ async def import_config():
 async def add_cogs():
   await logging("info", "Getting all extensions in the cogs folder...")
   startup_extensions = []
-  if os.name == "nt":
-    files_list = os.popen('dir cogs\\').read().split('\n')
-  else:
-    files_list = os.popen('ls cogs/').read().split('\n')
-  for cog in files_list:
+  for cog in os.listdir('cogs'):
     if not cog == "" and not cog.startswith('.') and not cog.startswith('_'):
       startup_extensions.append("cogs." + cog.split('.')[0])
   return startup_extensions
