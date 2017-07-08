@@ -28,12 +28,15 @@ class Mod:
     announcement = ' '.join(announcement)
     embed = discord.Embed(title="NEW ANNOUNCEMENT", description=announcement)
     embed.set_author(name=ctx.message.author.name + "#" + ctx.message.author.discriminator, icon_url=ctx.message.author.avatar_url)
-    if "announcements" in [channel.name for channels in ctx.message.server.channels]:
-      for channel in ctx.message.server.channels:
-        if channel.name == "announcements":
-          await self.bot.send_message(channel, embed=embed)
-    else:
-      await self.bot.send_message(ctx.message.server, embed=embed)
+    try:
+      if "announcements" in [channel.name for channel in ctx.message.server.channels]:
+        for channel in ctx.message.server.channels:
+          if channel.name == "announcements":
+            await self.bot.send_message(channel, embed=embed)
+      else:
+        await self.bot.send_message(ctx.message.server, embed=embed)
+    except discord.errors.Forbidden:
+      await self.bot.say(":warning: I don't have permissions to send messages in that channel.")
 
 def setup(bot):
   bot.add_cog(Mod(bot))
