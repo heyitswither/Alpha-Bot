@@ -17,21 +17,21 @@ class Admin:
     with open('config.json') as file_in:
       self.config = json.load(file_in)
 
-  @commands.command(name="gitpull", hidden=True)
-  async def gitpull(self):
+  @commands.command(name="gitpull", hidden=True, pass_context=True)
+  async def gitpull(self, ctx):
     if not ctx.message.author.id in self.config['admin_ids']: return
     os.popen("git pull origin master")
     await self.bot.say("Done!")
 
-  @commands.command(name="restart", hidden=True)
-  async def restart(self):
+  @commands.command(name="restart", hidden=True, pass_context=True)
+  async def restart(self, ctx):
     if not ctx.message.author.id in self.config['admin_ids']: return
     await self.bot.say("Restarting bot...")
     python = sys.executable
     os.execl(python, python, * sys.argv)
 
-  @commands.command(name="exit", hidden=True)
-  async def stop(self):
+  @commands.command(name="exit", hidden=True, pass_context=True)
+  async def stop(self, ctx):
     if not ctx.message.author.id in self.config['admin_ids']: return
     await self.bot.say("Stopping bot...")
     sys.exit()
