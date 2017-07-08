@@ -125,7 +125,7 @@ async def on_ready():
 
   for server in bot.servers:
     if not server.id in [server['id'] for server in config['servers']]:
-      config['servers'].append({"id": server.id,"enabled_modules": ["Fun","Info","Admin","Misc","Settings"],"prefix": config['prefix'],"mod_ids": []})
+      config['servers'].append({"id": server.id,"enabled_modules": ["Fun","Misc"],"prefix": config['prefix'],"mod_ids": []})
       update_file()
 
   for server in config['servers']:
@@ -144,7 +144,7 @@ async def on_message(message):
 @bot.event
 async def on_server_join(server):
   global config
-  config['servers'].append({"id": server.id,"enabled_modules": ["Fun","Info","Admin","Misc","Settings"],"prefix": config['prefix'],"mod_ids": []})
+  config['servers'].append({"id": server.id,"enabled_modules": ["Fun","Misc"],"prefix": config['prefix'],"mod_ids": []})
   update_file()
 
 @bot.event

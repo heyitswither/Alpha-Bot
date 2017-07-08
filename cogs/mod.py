@@ -36,4 +36,4 @@ class Mod:
       await self.bot.send_message(ctx.message.server, embed=embed)
 
 def setup(bot):
-  bot.add_cog(Mog(bot))
+  bot.add_cog(Mod(bot))
