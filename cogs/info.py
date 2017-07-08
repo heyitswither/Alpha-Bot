@@ -63,6 +63,10 @@ class Info:
         user = mention
     await self.bot.say("Soon:tm: {}".format(user.mention))
 
+  @commands.command(name="invite")
+  async def bot_invite(self):
+    await self.bot.say("You can invite me to your server using this link :smile:\n<{}>".format(discord.utils.oauth_url(self.bot.user.id) + "&permissions=201354247"))
+
 
 def setup(bot):
   bot.add_cog(Info(bot))
