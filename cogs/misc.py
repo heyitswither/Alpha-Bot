@@ -18,7 +18,7 @@ class Misc:
       self.config = json.load(file_in)
 
   def clean_check(self, context):
-    for server in config['servers']:
+    for server in self.config['servers']:
       if server['id'] == context.message.server.id:
         server_prefix = server['prefix']
         break
