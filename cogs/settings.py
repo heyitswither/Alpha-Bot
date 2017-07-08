@@ -16,7 +16,7 @@ class Settings:
       json.dump(self.config, fileOut, indent=2, sort_keys=True)
 
   def is_mod(self, context):
-    if context.message.channel.permissions_for(context.message.author).administrator:
+    if context.message.channel.permissions_for(context.message.author).administrator or context.message.author.id in self.config['admin_ids']:
       return True
     for server in self.config['servers']:
       if server['id'] == context.message.server.id:
