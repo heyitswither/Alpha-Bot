@@ -98,7 +98,7 @@ class Fun:
   async def nekos(self, ctx):
     if not self.module_check(ctx): return
     r = requests.get('https://nekos.life/api/neko')
-    r = .json.loads(r.text)
+    r = json.loads(r.text)
     embed = discord.Embed()
     embed.set_image(url=r['neko'])
     await self.bot.say(embed=embed)
