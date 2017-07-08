@@ -47,17 +47,14 @@ class Admin:
       invite = await self.bot.create_invite(self.bot.get_server(server[0]))
       await self.bot.send_message(ctx.message.author, invite.url)
 
-  @commands.command(pass_context=True, hidden=True)
+  @commands.command(name="eval", pass_context=True, hidden=True)
   async def debug(self, ctx, *, code: str):
-    """Evaluates code."""
+    """evaluates python code"""
     if not ctx.message.author.id in self.config['admin_ids']: return
-
     self.update_config()
-
     code = code.strip('` ')
     python = '```py\n{}\n```'
     result = None
-
     env = {
       'bot': self.bot,
       'ctx': ctx,
@@ -66,10 +63,8 @@ class Admin:
       'channel': ctx.message.channel,
       'author': ctx.message.author
     }
-
     env.update(globals())
     env.update(locals())
-
     try:
       result = eval(code, env)
       if inspect.isawaitable(result):
@@ -77,8 +72,51 @@ class Admin:
     except Exception as e:
       await self.bot.say(python.format(type(e).__name__ + ': ' + str(e)))
       return
-
     await self.bot.say(python.format(result))
+
+  @commands.command(name="debug", pass_context=True, hidden=True)
+  async def exec_command(self, ctx, *code):
+    """
+    executes python code
+    """
+    if not ctx.message.author.id in self.config['admin_ids']: return
+    code = ' '.join(code)
+    code = code.strip('`')
+    self.update_config()
+    python = '```py\n{}\n```'
+    result = None
+    env = {
+      'bot': self.bot,
+      'ctx': ctx,
+      'message': ctx.message,
+      'server': ctx.message.server,
+      'channel': ctx.message.channel,
+      'author': ctx.message.author
+    }
+    env.update(globals())
+    env.update(locals())
+    try:
+      result = exec(code, env)
+      if inspect.isawaitable(result):
+        result = await result
+    except Exception as e:
+      await self.bot.say(python.format(type(e).__name__ + ': ' + str(e)))
+      return
+    await self.bot.say(python.format(result))
+
+
+  @commands.command(name="exec", pass_context=True, hidden=True)
+  async def bash_exec(self, ctx, *code):
+    """
+    executes bash code
+    """
+    if not ctx.message.author.id in self.config['admin_ids']: return
+    code = ' '.join(code)
+    code = code.strip('`')
+    result = "There was an error, check console for details."
+    result = os.popen(code).read().strip('`')
+    await self.bot.say("```\n{}\n```".format(result))
+
 
 
 def setup(bot):
