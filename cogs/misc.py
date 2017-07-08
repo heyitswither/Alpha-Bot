@@ -22,7 +22,7 @@ class Misc:
       if server['id'] == context.server.id:
         server_prefix = server['prefix']
         break
-    if context.content.startswith(self.bot.command_prefix) or context.content.startswith(server_prefix) or context.author == self.bot.user:
+    if context.content.startswith(self.config['prefix']) or context.content.startswith(server_prefix) or context.author == self.bot.user:
       return True
     return False
 
