@@ -28,7 +28,7 @@ def get_prefix(bot, message):
 try:
   description = "Alpha, the everything in one discord bot"
   bot = commands.Bot(command_prefix=get_prefix, description=description)
-  bot.version = "0.4 indev"
+  bot.version = "0.10.1 indev"
   bot.voice_reload_cache = None
 except FileNotFoundError:
   pass
