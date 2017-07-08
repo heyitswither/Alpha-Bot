@@ -94,11 +94,11 @@ class Settings:
     mod_list = []
     for member in ctx.message.server.members:
       if ctx.message.channel.permissions_for(member).administrator:
-        mod_list.append(member.mention)
+        mod_list.append(member.name + "#" + member.discriminator)
       for server in self.config['servers']:
         if server['id'] == ctx.message.server.id:
           if member.id in server['mod_ids']:
-            mod_list.append(member.mention)
+            mod_list.append(member.name + "#" + member.discriminator)
     await self.bot.say('**Mods in {}**\n{}'.format(ctx.message.server.name, ', '.join(mod_list)))
 
   @mod.command(name="add", pass_context=True)

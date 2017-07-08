@@ -17,6 +17,10 @@ class Admin:
     with open('config.json') as file_in:
       self.config = json.load(file_in)
 
+  def update_config(self):
+    with open('config.json', 'r') as file_in:
+      self.config = json.load(file_in)
+
   @commands.command(name="gitpull", hidden=True, pass_context=True)
   async def gitpull(self, ctx):
     if not ctx.message.author.id in self.config['admin_ids']: return
@@ -47,6 +51,8 @@ class Admin:
   async def debug(self, ctx, *, code: str):
     """Evaluates code."""
     if not ctx.message.author.id in self.config['admin_ids']: return
+
+    self.update_config()
 
     code = code.strip('` ')
     python = '```py\n{}\n```'
