@@ -4,10 +4,13 @@ server moderation tools
 
 import discord
 from discord.ext import commands
+import json
 
 class Mod:
   def __init__(self, bot_):
     self.bot = bot_
+    with open('config.json') as file_in:
+      self.config = json.load(file_in)
 
   def is_mod(self, context):
     if context.message.channel.permissions_for(context.message.author).administrator or context.message.author.id in self.config['admin_ids']:
