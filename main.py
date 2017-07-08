@@ -15,18 +15,24 @@ from utils import prettyoutput as po
 start_time = time.time()
 
 def get_prefix(bot, message):
-  for mention in message.mentions:
-    if mention == bot.user:
-      return bot.user.mention
   try:
     with open('config.json') as file_in:
       local_config = json.load(file_in)
-    for server in local_config['servers']:
-      if server['id'] == message.server.id:
-        return server['prefix']
-    return local_config['prefix']
   except FileNotFoundError:
     return ""
+  if message.content.startswith('{} '.format(message.server.me.mention)):
+    return '{0.me.mention} '.format(message.server)
+  elif message.content.startswith('{} '.format(bot.user.mention)):
+    return '{0.user.mention} '.format(bot)
+  if not message.server:
+    return local_config['prefix']
+  if not message.mentions == []:
+    for mention in message.mentions:
+      if mention == bot.user:
+        return bot.user.mention
+  for server in local_config['servers']:
+    if server['id'] == message.server.id:
+      return server['prefix']
 
 try:
   description = "Alpha, the everything in one discord bot"
