@@ -9,9 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 - Need to add future plans
 
-## [0.10.2] - 2017-07-07
+## [0.11.0] - 2017-07-07
 ### Fixed
-- Fixed issue with confg file creation that prevented startup
+- Now properly runs on windows out of the box
+
+## [0.10.2] - 2017-07-07 (65505a)
+### Fixed
+- Fixed issue with config file creation that prevented startup
 
 ## [0.10.1] - 2017-07-06 (4d1a82)
 ### Added
