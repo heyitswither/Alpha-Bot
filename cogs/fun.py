@@ -94,6 +94,15 @@ class Fun:
     embed.set_image(url=r['img'])
     await self.bot.say(embed=embed)
 
+  @commands.command(name="neko", pass_context=True)
+  async def nekos(self, ctx):
+    if not self.module_check(ctx): return
+    r = requests.get('https://nekos.life/api/neko')
+    r = .json.loads(r.text)
+    embed = discord.Embed()
+    embed.set_image(url=r['neko'])
+    await self.bot.say(embed=embed)
+
 
 def setup(bot):
   bot.add_cog(Fun(bot))

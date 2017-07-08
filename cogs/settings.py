@@ -74,7 +74,7 @@ class Settings:
     if not self.is_mod(ctx): return
     for server in self.config['servers']:
       if server['id'] == ctx.message.server.id:
-        server['prefix'] = ' '.join(new_prefix)
+        server['prefix'] = new_prefix[0].strip(',')
         break
     self.update_file(self)
     await self.bot.say('Prefix set to {}'.format(new_prefix[0]))
