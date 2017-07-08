@@ -31,16 +31,12 @@ class Misc:
     for server in self.config['servers']:
       if server['id'] == context.message.server.id:
         if "Misc" in server['enabled_modules']:
-          if context.command.name == "clean":
-            return clean_check(self, context)
-          else:
-            return True
+          return True
         break
     return False
 
   @commands.command(name="clean", pass_context=True)
   async def clean_spam(self, ctx, count: int = -1):
-    if not self.module_check(ctx): return
     if count == -1:
       await self.bot.say("You need to include a number of messages to delete.")
     elif count > 200:
