@@ -9,7 +9,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 - Need to add future plans
 
-## [0.11.0] - 2017-07-07
+## [0.11.1] - 2017-07-12
+### Added
+- msgowner command to send messages to the owner
+- addadmin and removeadmin comamnds for bot owners
+
+### Changed
+- neko command only works in nsfw channels until api removes nsfw images
+
+## [0.11.0] - 2017-07-07 (07139b)
 ### Fixed
 - Now properly runs on windows out of the box
 

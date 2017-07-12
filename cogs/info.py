@@ -67,6 +67,26 @@ class Info:
   async def bot_invite(self):
     await self.bot.say("You can invite me to your server using this link :smile:\n<{}>".format(discord.utils.oauth_url(self.bot.user.id) + "&permissions=201354247"))
 
+  @commands.command(name="suggest", pass_context=True)
+  async def suggest(self, ctx, *suggestion):
+    """
+    suggest a new feature for the bot
+    """
+    suggestion = ' '.join(suggestion)
+    embed = discord.Embed(title="New Suggestion", description=suggestion)
+    embed.set_author(name=ctx.message.author.name + "#" + ctx.message.author.discriminator + " (" + ctx.message.author.id + ")", icon_url=ctx.message.author.avatar_url)
+    await self.bot.send_message(self.bot.get_server('197780624688414720').get_channel('332616763294613505'), embed=embed)
+
+  @commands.command(name="msgowner", pass_context=True)
+  async def msg_owner(self, ctx, *msg):
+    """
+    Sends a message to the bot owner
+    """
+    msg = ' '.join(msg)
+    embed = discord.Embed(title="New Message", description=msg)
+    embed.set_author(name=ctx.message.author.name + "#" + ctx.message.author.discriminator + " (" + ctx.message.author.id + ")", icon_url=ctx.message.author.avatar_url)
+    await self.bot.send_message([user for user in self.bot.get_all_members() if user.id == "144630969729679360"][0], embed=embed)
+
 
 def setup(bot):
   bot.add_cog(Info(bot))

@@ -21,6 +21,10 @@ class Admin:
     with open('config.json', 'r') as file_in:
       self.config = json.load(file_in)
 
+  def update_file(self):
+    with open('config.json', 'w') as file_out:
+      json.dump(self.config, file_out, indent=2, sort_keys=True)
+
   @commands.command(name="gitpull", hidden=True, pass_context=True)
   async def gitpull(self, ctx):
     if not ctx.message.author.id in self.config['admin_ids']: return
@@ -73,6 +77,7 @@ class Admin:
       await self.bot.say(python.format(type(e).__name__ + ': ' + str(e)))
       return
     await self.bot.say(python.format(result))
+    self.update_file()
 
   @commands.command(name="debug", pass_context=True, hidden=True)
   async def exec_command(self, ctx, *code):
@@ -103,6 +108,7 @@ class Admin:
       await self.bot.say(python.format(type(e).__name__ + ': ' + str(e)))
       return
     await self.bot.say(python.format(result))
+    self.update_file()
 
 
   @commands.command(name="exec", pass_context=True, hidden=True)
@@ -117,7 +123,29 @@ class Admin:
     result = os.popen(code).read().strip('`')
     await self.bot.say("```\n{}\n```".format(result))
 
+  @commands.command(name="addadmin", pass_context=True, hidden=True)
+  async def add_admin(self, ctx, *new_admin):
+    if not ctx.message.author.id in self.config['admin_ids']: return
+    try:
+      member = ctx.message.mentions[0].id
+    except IndexError:
+      member = new_admin
+    self.config['admin_ids'].append(member)
+    self.update_file()
+    added_admin = [members.mention for members in self.bot.get_all_members() if members.id == member][0]
+    await self.bot.say("{} has been added as an admin! :smile:".format(added_admin))
 
+  @commands.command(name="removeadmin", pass_context=True, hidden=True)
+  async def remove_admin(self, ctx, *admin):
+    if not ctx.message.author.id in self.config['admin_ids']: return
+    try:
+      member = ctx.message.mentions[0].id
+    except IndexError:
+      member = new_admin
+    self.config['admin_ids'].remove(member)
+    self.update_file()
+    removed_admin = [members.mention for members in self.bot.get_all_members() if members.id == member][0]
+    await self.bot.say("{} has been removed as an admin".format(removed_admin))
 
 def setup(bot):
   bot.add_cog(Admin(bot))

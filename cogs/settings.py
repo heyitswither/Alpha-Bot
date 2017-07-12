@@ -12,8 +12,8 @@ class Settings:
       self.config = json.load(file_in)
 
   def update_file(self, *args):
-    with open('config.json', 'w') as fileOut:
-      json.dump(self.config, fileOut, indent=2, sort_keys=True)
+    with open('config.json', 'w') as file_out:
+      json.dump(self.config, file_out, indent=2, sort_keys=True)
 
   def is_mod(self, context):
     if context.message.channel.permissions_for(context.message.author).administrator or context.message.author.id in self.config['admin_ids']:
