@@ -6,6 +6,10 @@ import traceback
 from datetime import datetime
 import time
 import math
+import requests
+from PIL import ImageDraw
+from PIL import ImageFont
+from PIL import Image
 
 import discord
 from discord.ext import commands
@@ -125,7 +129,7 @@ async def on_ready():
 
   for server in bot.servers:
     if not server.id in [server['id'] for server in config['servers']]:
-      config['servers'].append({"id": server.id,"enabled_modules": ["Fun","Misc","Nsfw"],"prefix": config['prefix'],"mod_ids": []})
+      config['servers'].append({"id": server.id,"enabled_modules": ["Fun","Misc","Nsfw"],"prefix": config['prefix'],"mod_ids": [],"welcome_channel":server.default_channel.id})
       update_file()
 
   for server in config['servers']:
@@ -144,7 +148,7 @@ async def on_message(message):
 @bot.event
 async def on_server_join(server):
   global config
-  config['servers'].append({"id": server.id,"enabled_modules": ["Fun","Misc","Nsfw"],"prefix": config['prefix'],"mod_ids": []})
+  config['servers'].append({"id": server.id,"enabled_modules": ["Fun","Misc","Nsfw"],"prefix": config['prefix'],"mod_ids": [],"welcome_channel":server.default_channel.id})
   update_file()
 
 @bot.event
@@ -155,6 +159,60 @@ async def on_server_leave(server):
       config['servers'].remove(server)
   update_file()
 
+@bot.event
+async def on_member_join(member):
+  global config
+  with open('config.json', 'r') as file_in:
+    config = json.load(file_in)
+  if not "Welcome" in [server['enabled_modules'] for server in config['servers'] if server['id'] == member.server.id][0]: return
+  template = Image.open('extras/template.png')
+  draw = ImageDraw.Draw(template)
+  user = member.name
+  server = member.server.name
+  img_fraction = 0.50
+  fontsize = 16
+  if member.avatar_url == "":
+    member_avatar = requests.get(member.default_avatar_url)
+  else:
+    member_avatar = requests.get(member.avatar_url)
+  with open('extras/{}.png'.format(member.name), 'wb') as f:
+    for chunk in member_avatar.iter_content(chunk_size=1024):
+      if chunk:
+        f.write(chunk)
+  member_avatar = Image.open('extras/{}.png'.format(member.name))
+  member_avatar.thumbnail((182, 182), Image.ANTIALIAS)
+  template.paste(member_avatar, (34, 71))
+  guild_icon = requests.get(member.server.icon_url)
+  with open('extras/{}.png'.format(member.server.name), 'wb') as f:
+    for chunk in guild_icon.iter_content(chunk_size=1024):
+      if chunk:
+        f.write(chunk)
+  guild_icon = Image.open('extras/{}.png'.format(member.server.name))
+  guild_icon.thumbnail((64, 64), Image.ANTIALIAS)
+  template.paste(guild_icon, (660, 300))
+  font = ImageFont.truetype("extras/Aaargh.ttf", fontsize)
+  while font.getsize(user)[0] < img_fraction*template.size[0]:
+    fontsize += 1
+    font = ImageFont.truetype("extras/Aaargh.ttf", fontsize)
+  fontsize -= 1
+  font = ImageFont.truetype("extras/Aaargh.ttf", fontsize)
+  draw.text((150,330),user,(0,0,0),font=font)
+
+  fontsize = 16
+  img_fraction = 0.25
+  font = ImageFont.truetype("extras/Aaargh.ttf", fontsize)
+  while font.getsize(server)[0] < img_fraction*template.size[0]:
+    fontsize += 1
+    font = ImageFont.truetype("extras/Aaargh.ttf", fontsize)
+  fontsize -= 1
+  font = ImageFont.truetype("extras/Aaargh.ttf", fontsize)
+  draw.text((540,255),server,(0,0,0),font=font)
+
+  template.save('extras/finished.png')
+  await bot.send_file(member.server.get_channel([server['welcome_channel'] for server in config['servers'] if server['id'] == member.server.id][0]), 'extras/finished.png')
+  os.remove('extras/finished.png')
+  os.remove('extras/{}.png'.format(member.name))
+  os.remove('extras/{}.png'.format(member.server.name))
 
 @bot.command(name="reload", hidden=True, pass_context=True)
 async def reload_module(ctx, module):

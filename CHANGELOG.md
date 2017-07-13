@@ -9,7 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 - Need to add future plans
 
-## [0.11.2] - 2017-07-12
+## [0.12.0] - 2017-0-13 ()
+### Added
+- Welcome messages (disabled by default)
+- 'module enable welcome' to enable
+- 'welcome channel' to change channel (defaults to default channel)
+
+## [0.11.2] - 2017-07-12 (572e81)
 ### Added
 - nya command for nsfw nekos (nsfw channel only)
 - module list command to show all available modules

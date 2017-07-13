@@ -164,5 +164,27 @@ class Settings:
           await self.bot.say('{0.mention} is not a moderator'.format(await self.bot.get_user_info(mod)))
         break
 
+  @commands.group(name="welcome")
+  async def welcome(self):
+    """
+    'welcome channel' to set welcome channel
+    """
+    pass
+
+  @welcome.command(name="channel", pass_context=True)
+  async def channel_welcome(self, ctx, *channel):
+    """
+    change the channel for welcome messages
+    """
+    if not self.is_mod(ctx): return
+    if channel is None: return
+    channel =  ' '.join(channel).strip('<#').strip('>')
+    for server in self.config['servers']:
+      if server['id'] == ctx.message.server.id:
+        server['welcome_channel'] = channel
+        break
+    self.update_file()
+    await self.bot.say("Welcome channel set to {}!".format(ctx.message.server.get_channel(channel)))
+
 def setup(bot):
   bot.add_cog(Settings(bot))
