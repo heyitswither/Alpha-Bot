@@ -9,7 +9,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 - Need to add future plans
 
-## [0.11.1] - 2017-07-12
+## [0.11.2] - 2017-07-12
+### Added
+- nya command for nsfw nekos (nsfw channel only)
+- module list command to show all available modules
+
+### Changed
+- neko command can now be used outside of nsfw channels
+
+### Fixed
+- Server mods can now only enable/disable existing modules
+
+## [0.11.1] - 2017-07-12 (c1c623)
 ### Added
 - msgowner command to send messages to the owner
 - addadmin and removeadmin comamnds for bot owners

@@ -4,6 +4,7 @@ for changing server-wide bot settings
 import discord
 from discord.ext import commands
 import json
+import os
 
 class Settings:
   def __init__(self, bot_):
@@ -25,6 +26,11 @@ class Settings:
         break
     return False
 
+  def is_module(self, module):
+    if module.lower() + ".py" in os.listdir('cogs'):
+      return True
+    return False
+
   @commands.group()
   async def module(self):
     """
@@ -39,6 +45,7 @@ class Settings:
     """
     if not self.is_mod(ctx): return
     module = module[0].title()
+    if not is_module(module): return
     for server in self.config['servers']:
       if server['id'] == ctx.message.server.id:
         if not module in server['enabled_modules']:
@@ -56,6 +63,7 @@ class Settings:
     """
     if not self.is_mod(ctx): return
     module = module[0].title()
+    if not is_module(module): return
     for server in self.config['servers']:
       if server['id'] == ctx.message.server.id:
         if module in server['enabled_modules']:
@@ -66,12 +74,31 @@ class Settings:
           await self.bot.say('{} is already disabled'.format(module))
         break
 
+  @module.command(name="list", pass_context=True)
+  async def list_modules(self, ctx):
+    """
+    Lists all of the available modules
+    """
+    modules = "**Available modules:**\n```\n"
+    for module in os.listdir('cogs'):
+      if not module.startswith('.') and not module.startswith('_'):
+        modules += module.split('.')[0].title() + "\n"
+    modules += "```"
+    await self.bot.say(modules)
+
+
   @commands.command(name="prefix", pass_context=True)
   async def change_prefix(self, ctx, *new_prefix):
     """
     Changes the bot prefix for the current server
     """
     if not self.is_mod(ctx): return
+    if not new_prefix:
+      for server in self.config['servers']:
+        if server['id'] == ctx.message.server.id:
+          await self.bot.say("This server's prefix is {}".format(server['prefix']))
+          break
+      return
     for server in self.config['servers']:
       if server['id'] == ctx.message.server.id:
         server['prefix'] = new_prefix[0].strip(',')

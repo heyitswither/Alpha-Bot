@@ -97,7 +97,6 @@ class Fun:
   @commands.command(name="neko", pass_context=True)
   async def nekos(self, ctx):
     if not self.module_check(ctx): return
-    if not ctx.message.channel.name.startswith('nsfw'): return
     r = requests.get('https://nekos.life/api/neko')
     r = json.loads(r.text)
     embed = discord.Embed()
