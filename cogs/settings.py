@@ -45,7 +45,7 @@ class Settings:
     """
     if not self.is_mod(ctx): return
     module = module[0].title()
-    if not is_module(module): return
+    if not self.is_module(module): return
     for server in self.config['servers']:
       if server['id'] == ctx.message.server.id:
         if not module in server['enabled_modules']:
@@ -63,7 +63,7 @@ class Settings:
     """
     if not self.is_mod(ctx): return
     module = module[0].title()
-    if not is_module(module): return
+    if not self.is_module(module): return
     for server in self.config['servers']:
       if server['id'] == ctx.message.server.id:
         if module in server['enabled_modules']:

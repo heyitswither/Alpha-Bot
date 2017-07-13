@@ -1,10 +1,13 @@
 import discord
 import requests
+import json
 from discord.ext import commands
 
 class NSFW:
   def __init__(self, bot_):
     self.bot = bot_
+    with open('config.json') as file_in:
+      self.config = json.load(file_in)
 
   def update_config(self):
     with open('config.json', 'r') as file_in:
@@ -14,7 +17,7 @@ class NSFW:
     self.update_config()
     for server in self.config['servers']:
       if server['id'] == context.message.server.id:
-        if "nsfw" in server['enabled_modules']:
+        if "Nsfw" in server['enabled_modules']:
           return True
     return False
 
