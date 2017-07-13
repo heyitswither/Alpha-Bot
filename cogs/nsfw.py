@@ -27,3 +27,6 @@ class NSFW:
     embed = discord.Embed()
     embed.set_image(url=r['neko'])
     await self.bot.say(embed=embed)
+
+def setup(bot):
+  bot.add_cog(NSFW(bot))
