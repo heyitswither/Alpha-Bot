@@ -180,7 +180,7 @@ async def on_member_join(member):
       if chunk:
         f.write(chunk)
   member_avatar = Image.open('extras/{}.png'.format(member.name))
-  member_avatar.thumbnail((182, 182), Image.ANTIALIAS)
+  member_avatar = member_avatar.resize((182, 182), Image.ANTIALIAS)
   template.paste(member_avatar, (34, 71))
   guild_icon = requests.get(member.server.icon_url)
   with open('extras/{}.png'.format(member.server.name), 'wb') as f:
@@ -188,24 +188,24 @@ async def on_member_join(member):
       if chunk:
         f.write(chunk)
   guild_icon = Image.open('extras/{}.png'.format(member.server.name))
-  guild_icon.thumbnail((64, 64), Image.ANTIALIAS)
+  guild_icon = guild_icon.resize((64, 64), Image.ANTIALIAS)
   template.paste(guild_icon, (660, 300))
-  font = ImageFont.truetype("extras/Aaargh.ttf", fontsize)
+  font = ImageFont.truetype("extras/segoeui.ttf", fontsize)
   while font.getsize(user)[0] < img_fraction*template.size[0]:
     fontsize += 1
-    font = ImageFont.truetype("extras/Aaargh.ttf", fontsize)
+    font = ImageFont.truetype("extras/segoeui.ttf", fontsize)
   fontsize -= 1
-  font = ImageFont.truetype("extras/Aaargh.ttf", fontsize)
-  draw.text((150,330),user,(0,0,0),font=font)
+  font = ImageFont.truetype("extras/segoeui.ttf", fontsize)
+  draw.text((100,300),user,(0,0,0),font=font)
 
   fontsize = 16
   img_fraction = 0.25
-  font = ImageFont.truetype("extras/Aaargh.ttf", fontsize)
+  font = ImageFont.truetype("extras/segoeui.ttf", fontsize)
   while font.getsize(server)[0] < img_fraction*template.size[0]:
     fontsize += 1
-    font = ImageFont.truetype("extras/Aaargh.ttf", fontsize)
+    font = ImageFont.truetype("extras/segoeui.ttf", fontsize)
   fontsize -= 1
-  font = ImageFont.truetype("extras/Aaargh.ttf", fontsize)
+  font = ImageFont.truetype("extras/segoeui.ttf", fontsize)
   draw.text((540,255),server,(0,0,0),font=font)
 
   template.save('extras/finished.png')

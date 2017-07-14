@@ -43,9 +43,9 @@ class Settings:
     """
     Enables a module in the current server
     """
-    if not self.is_mod(ctx): return
+    if not self.is_mod(ctx): print('nope'); return
     module = module[0].title()
-    if not self.is_module(module): return
+    if not self.is_module(module): print('not nodule'); return
     for server in self.config['servers']:
       if server['id'] == ctx.message.server.id:
         if not module in server['enabled_modules']:
