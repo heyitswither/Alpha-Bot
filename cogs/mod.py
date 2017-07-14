@@ -47,7 +47,10 @@ class Mod:
     kick a user
     """
     if not self.is_mod(ctx): return
-    user = ctx.message.mentions[0]
+    try:
+      user = ctx.message.mentions[0]
+    except IndexError:
+      await self.bot.say("That user is not in this server")
     try:
       await self.bot.kick(user)
     except discord.errors.Forbidden:
@@ -61,7 +64,10 @@ class Mod:
     bans a user
     """
     if not self.is_mod(ctx): return
-    user = ctx.message.mentions[0]
+    try:
+      user = ctx.message.mentions[0]
+    except IndexError:
+      await self.bot.say("That user is not in this server")
     try:
       await self.bot.ban(user)
     except discord.errors.Forbidden:
