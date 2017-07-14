@@ -196,7 +196,7 @@ async def on_member_join(member):
     font = ImageFont.truetype("extras/segoeui.ttf", fontsize)
   fontsize -= 1
   font = ImageFont.truetype("extras/segoeui.ttf", fontsize)
-  draw.text((100,300),user,(0,0,0),font=font)
+  draw.text((125,290),user,(0,0,0),font=font)
 
   fontsize = 16
   img_fraction = 0.25
