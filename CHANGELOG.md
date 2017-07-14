@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 - Need to add future plans
 
-## [0.12.0] - 2017-0-13 ()
+## [0.12.1] - 2017-07-13 ()
+### Added
+- kick and ban commands for server mods
+
+## [0.12.0] - 2017-07-13 ()
 ### Added
 - Welcome messages (disabled by default)
 - 'module enable welcome' to enable

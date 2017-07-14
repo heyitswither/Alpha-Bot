@@ -41,5 +41,33 @@ class Mod:
     except discord.errors.Forbidden:
       await self.bot.say(":warning: I don't have permissions to send messages in that channel.")
 
+  @commands.command(name="kick", pass_context=True)
+  async def kick(self, ctx):
+    """
+    kick a user
+    """
+    if not self.is_mod(ctx): return
+    user = ctx.message.mentions[0]
+    try:
+      await self.bot.kick(user)
+    except discord.errors.Forbidden:
+      await self.bot.say("I require the `Kick Members` permission")
+    finally:
+      await self.bot.say("{} has been kicked".format(user.mention))
+
+  @commands.command(name="ban", pass_context=True)
+  async def ban(self, ctx):
+    """
+    bans a user
+    """
+    if not self.is_mod(ctx): return
+    user = ctx.message.mentions[0]
+    try:
+      await self.bot.ban(user)
+    except discord.errors.Forbidden:
+      await self.bot.say("I require the `Ban Members` permission")
+    finally:
+      await self.bot.say("{} has been banned".format(user.mention))
+
 def setup(bot):
   bot.add_cog(Mod(bot))

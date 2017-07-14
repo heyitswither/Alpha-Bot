@@ -116,7 +116,7 @@ async def on_ready():
       await logging("error", "The bot cannot access the log channel")
   await logging("success", 'Successfully logged into discord as\n\t\t{}#{} ({})'.format(bot.user.name, bot.user.discriminator, bot.user.id))
 
-  await bot.change_presence(game=discord.Game(name='Alpha Bot indev'))
+  await bot.change_presence(game=discord.Game(name='%help for help'))
 
   for extension in await add_cogs():
     await logging("info", "Loading {}...".format(extension))
