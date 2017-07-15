@@ -7,7 +7,6 @@ from datetime import datetime
 import time
 import math
 import requests
-import session
 from PIL import ImageDraw
 from PIL import ImageFont
 from PIL import Image
@@ -110,7 +109,7 @@ async def update_dbl():
     dump = {'server_count': len(bot.servers)}
     head = {'authorization': ''.format(config['dbl-token']), 'content-type': 'application/json'}
     url = 'https://discordbots.org/api/bots/{}/stats'.format(bot.user.id)
-    await session.post(url, data=dump, headers=head)
+    requests.post(url, data=dump, headers=head)
 
 @bot.event
 async def on_ready():
