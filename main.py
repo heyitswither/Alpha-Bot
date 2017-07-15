@@ -7,6 +7,7 @@ from datetime import datetime
 import time
 import math
 import requests
+import session
 from PIL import ImageDraw
 from PIL import ImageFont
 from PIL import Image
