@@ -219,7 +219,7 @@ async def on_member_join(member):
     font = ImageFont.truetype("extras/segoeui.ttf", fontsize)
   fontsize -= 1
   font = ImageFont.truetype("extras/segoeui.ttf", fontsize)
-  if len(user) < 6:
+  if len(server) < 6:
     font = ImageFont.truetype("extras/segoeui.ttf", 32)
   draw.text((540,255),server,(0,0,0),font=font)
 
