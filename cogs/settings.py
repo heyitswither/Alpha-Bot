@@ -93,7 +93,7 @@ class Settings:
     Changes the bot prefix for the current server
     """
     if not self.is_mod(ctx): return
-    if not new_prefix:
+    if new_prefix == ():
       for server in self.config['servers']:
         if server['id'] == ctx.message.server.id:
           await self.bot.say("This server's prefix is {}".format(server['prefix']))
@@ -101,10 +101,10 @@ class Settings:
       return
     for server in self.config['servers']:
       if server['id'] == ctx.message.server.id:
-        server['prefix'] = new_prefix[0].strip(',')
+        server['prefix'] = ' '.join(new_prefix).strip(',')
         break
     self.update_file(self)
-    await self.bot.say('Prefix set to {}'.format(new_prefix[0]))
+    await self.bot.say('Prefix set to {}'.format(' '.join(new_prefix).strip(',')))
 
   @commands.group()
   async def mod(self):
