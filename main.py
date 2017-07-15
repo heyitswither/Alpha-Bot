@@ -106,7 +106,7 @@ async def add_cogs():
 
 async def update_dbl():
   if not config['dbl-token'] == "":
-    dump = json.dump({'server_count': len(bot.servers)})
+    dump = {'server_count': len(bot.servers)}
     head = {'authorization': ''.format(config['dbl-token']), 'content-type': 'application/json'}
     url = 'https://discordbots.org/api/bots/{}/stats'.format(bot.user.id)
     await session.post(url, data=dump, headers=head)
