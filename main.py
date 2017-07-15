@@ -90,7 +90,7 @@ async def import_config():
   except FileNotFoundError:
     await logging("error", "Config file not found, creating...")
     with open('config.json', 'w+') as file_out:
-      config_temp = {"token": "", "admin_ids": [""], "servers": [], "log_channel_id": "", "prefix": ""}
+      config_temp = {"token": "", "admin_ids": [""], "servers": [], "log_channel_id": "", "prefix": "", "dbl-token": ""}
       json.dump(config_temp, file_out, indent=2, sort_keys=True)
     await logging("error", "Please put your bot's information in config.json")
     sys.exit()
@@ -104,6 +104,12 @@ async def add_cogs():
       startup_extensions.append("cogs." + cog.split('.')[0])
   return startup_extensions
 
+async def update_dbl():
+  if not config['dbl-token'] == "":
+    dump = json.dump({'server_count': len(bot.servers)})
+    head = {'authorization': ''.format(config['dbl-token']), 'content-type': 'application/json'}
+    url = 'https://discordbots.org/api/bots/{}/stats'.format(bot.user.id)
+    await session.post(url, data=dump, headers=head)
 
 @bot.event
 async def on_ready():
@@ -151,6 +157,7 @@ async def on_server_join(server):
   global config
   config['servers'].append({"id": server.id,"enabled_modules": ["Fun","Misc","Nsfw"],"prefix": config['prefix'],"mod_ids": [],"welcome_channel":server.default_channel.id})
   update_file()
+  await update_dbl()
 
 @bot.event
 async def on_server_leave(server):
@@ -159,6 +166,7 @@ async def on_server_leave(server):
     if server['id'] == server.id:
       config['servers'].remove(server)
   update_file()
+  await update_dbl()
 
 @bot.event
 async def on_member_join(member):
