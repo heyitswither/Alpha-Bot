@@ -144,6 +144,8 @@ async def on_ready():
       config['servers'].remove(server)
       update_file()
 
+  await update_dbl()
+
   end_time = time.time() - start_time
   await logging("info", "Started in {} seconds ({} ms)".format(math.floor(end_time), math.floor(end_time * 1000)))
 
