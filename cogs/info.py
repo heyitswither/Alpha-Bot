@@ -150,9 +150,9 @@ class Info:
       else:
         embed.add_field(name="Nickname", value="None")
       if len(user.roles) > 1:
-        embed.add_field(name="Roles", value=' ,'.join([role.name for role in user.roles if not role.name == "@everyone"]))
+        embed.add_field(name="Roles", value=', '.join([role.name for role in user.roles if not role.name == "@everyone"]))
       if len(self.get_permissions(user)) > 0 and not user == ctx.message.server.owner:
-        embed.add_field(name="Permissions", value=' ,'.join(self.get_permissions(user)))
+        embed.add_field(name="Permissions", value=', '.join(self.get_permissions(user)))
       elif user == ctx.message.server.owner:
         embed.add_field(name="Permissions", value="Owner")
     await self.bot.say(embed=embed)
