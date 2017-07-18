@@ -122,7 +122,10 @@ class Info:
     embed.add_field(name="Roles", value=len(server.roles) - 1)
     embed.add_field(name="Owner", value=f'{server.owner.name}#{server.owner.discriminator}')
     embed.add_field(name="All Roles", value="https://hastebin.com/" + requests.post('https://hastebin.com/documents', data='Roles in ' + server.name + ':\n' + ', '.join([role.name for role in server.roles if not role.name == '@everyone'])).json()['key'])
-    embed.add_field(name="All Members", value="https://hastebin.com/" + requests.post('https://hastebin.com/documents', data=b'Members in ' + server.name.encode('utf-8') + b':\n' + b', '.join([member.name.encode('utf-8') for member in server.members])).json()['key'])
+    try:
+      embed.add_field(name="All Members", value="https://hastebin.com/" + requests.post('https://hastebin.com/documents', data=b'Members in ' + server.name.encode('utf-8') + b':\n' + b', '.join([member.name.encode('utf-8') for member in server.members])).json()['key'])
+    except UnicodeEncodeError:
+      embed.add_field(name="All Members", value="Sorry, someone in your server doesn't like us to have nice things")
     await self.bot.say(embed=embed)
 
 
