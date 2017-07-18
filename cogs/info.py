@@ -128,6 +128,9 @@ class Info:
       pass
     await self.bot.say(embed=embed)
 
+  @server_info.error
+  async def serverinfo_error(self, error, ctx):
+    pass
 
   @commands.command(name="userinfo", pass_context=True)
   async def user_info(self, ctx, user: discord.User=None):
