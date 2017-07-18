@@ -45,7 +45,7 @@ class Info:
       permissions.append("Manage Nicknames")
     if user.server_permissions.manage_emojis:
       permissions.append("Manange Emojis")
-    if user.server_permissions.manage_view_audit_logs:
+    if user.server_permissions.view_audit_logs:
       permissions.append("View Audit Logs")
     return permissions
 
