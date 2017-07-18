@@ -3,6 +3,10 @@ Everything in one discord bot, written in discord.py
 
 [Click here to invite the bot to your server](https://discordapp.com/oauth2/authorize?client_id=331841835733614603&scope=bot&permissions=201354247)
 
+[Upvote on Discord Bots List](https://discordbots.org/bot/331841835733614603)
+
+[Discord Bots Page](https://bots.discord.pw/bots/331841835733614603)
+
 ## Installation
 
 1. Clone this repository
