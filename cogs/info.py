@@ -116,7 +116,7 @@ class Info:
     embed.set_thumbnail(url=server.icon_url)
     embed.add_field(name="ID", value=server.id)
     embed.add_field(name="Region", value=self.get_region(server))
-    embed.add_field(name="Members", value=f'{len([member for member in server.members if member.status.online])}/{server.member_count}')
+    embed.add_field(name="Members", value=f'{len([member for member in server.members if member.status == discord.Status.online])}/{server.member_count}')
     embed.add_field(name="Text Channels", value=len([channel for channel in server.channels if channel.type == discord.ChannelType.text]))
     embed.add_field(name="Voice Channels", value=len([channel for channel in server.channels if channel.type == discord.ChannelType.voice]))
     embed.add_field(name="Roles", value=len(server.roles) - 1)
