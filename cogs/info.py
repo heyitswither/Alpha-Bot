@@ -2,15 +2,83 @@
 bot info, server info, user info, any other info; all goes here
 """
 
+from datetime import datetime
 from platform import python_version
 
 import discord
+import requests
 from discord.ext import commands
 
 
 class Info:
   def __init__(self, bot_):
     self.bot = bot_
+
+  def get_status(self, user):
+    if user.status.online:
+      return "Online"
+    elif user.status.offline:
+      return "Offline"
+    elif user.status.idle:
+      return "Idle"
+    elif user.status.dnd:
+      return "Do not disturb"
+
+  def get_permissions(self, user):
+    permissions = []
+    if user.server_permissions.administrator:
+      permissions.append("Administrator")
+      return permissions
+    if user.server_permissions.ban_members:
+      permissions.append("Ban Members")
+    if user.server_permissions.kick_members:
+      permissions.append("Kick Members")
+    if user.server_permissions.manage_server:
+      permissions.append("Manage Server")
+    if user.server_permissions.manage_channels:
+      permissions.append("Manage Channels")
+    if user.server_permissions.manage_roles:
+      permissions.append("Manage Roles")
+    if user.server_permissions.manage_webhooks:
+      permissions.append("Manage Webhooks")
+    if user.server_permissions.manage_nicknames:
+      permissions.append("Manage Nicknames")
+    if user.server_permissions.manage_emojis:
+      permissions.append("Manange Emojis")
+    if user.server_permissions.manage_view_audit_logs:
+      permissions.append("View Audit Logs")
+    return permissions
+
+  def get_region(self, server):
+    if server.region == discord.ServerRegion.us_west:
+      return "us-west"
+    elif server.region == discord.ServerRegion.us_east:
+      return "us-east"
+    elif server.region == discord.ServerRegion.us_central:
+      return "us-central"
+    elif server.region == discord.ServerRegion.eu_west:
+      return "eu-west"
+    elif server.region == discord.ServerRegion.eu_central:
+      return "eu-central"
+    elif server.region == discord.ServerRegion.singapore:
+      return "singapore"
+    elif server.region == discord.ServerRegion.london:
+      return "london"
+    elif server.region == discord.ServerRegion.sydney:
+      return "sydney"
+    elif server.region == discord.ServerRegion.amsterdam:
+      return "amsterdam"
+    elif server.region == discord.ServerRegion.frankfurt:
+      return "frankfurt"
+    elif server.region == discord.ServerRegion.brazil:
+      return "brazil"
+    elif server.region == discord.ServerRegion.vip_us_east:
+      return "vip-us-east"
+    elif server.region == discord.ServerRegion.vip_us_west:
+      return "vip-us-west"
+    elif server.region == discord.ServerRegion.vip_amsterdam:
+      return "vip-amsterdam"
+    return "None"
 
   @commands.command(name="info")
   async def bot_info(self):
@@ -41,27 +109,57 @@ class Info:
     await self.bot.say(embed=info_embed)
 
   @commands.command(name="serverinfo", pass_context=True)
-  async def server_info(self, ctx, server_id="ctx"):
-    if server_id == "ctx":
-      server_id = ctx.message.server.id
-    try:
-      int(server_id)
-    except ValueError:
-      pass
-    else:
-      if not self.bot.get_server(server_id) is None:
-        await self.bot.say("Soon:tm: {}".format(server_id))
-      else:
-        await self.bot.say("I'm not in that server!")
+  async def server_info(self, ctx,):
+    server = ctx.message.server
+    embed = discord.Embed()
+    embed.set_author(name=server.name, icon_url=server.icon_url)
+    embed.set_thumbnail(url=server.icon_url)
+    embed.add_field(name="ID", value=server.id)
+    embed.add_field(name="Region", value=self.get_region(server))
+    embed.add_field(name="Members", value=f'{len([member for member in server.members if member.status.online])}/{server.member_count}')
+    embed.add_field(name="Text Channels", value=len([channel for channel in server.channels if channel.type == discord.ChannelType.text]))
+    embed.add_field(name="Voice Channels", value=len([channel for channel in server.channels if channel.type == discord.ChannelType.voice]))
+    embed.add_field(name="Roles", value=len(server.roles) - 1)
+    embed.add_field(name="Owner", value=f'{server.owner.name}#{server.owner.discriminator}')
+    embed.add_field(name="All Roles", value="https://hastebin.com/" + requests.post('https://hastebin.com/documents', data='Roles in ' + server.name + ':\n' + ', '.join([role.name for role in server.roles if not role.name == '@everyone'])).json()['key'])
+    embed.add_field(name="All Members", value="https://hastebin.com/" + requests.post('https://hastebin.com/documents', data=b'Members in ' + server.name.encode('utf-8') + b':\n' + b', '.join([member.name.encode('utf-8') for member in server.members])).json()['key'])
+    await self.bot.say(embed=embed)
+
 
   @commands.command(name="userinfo", pass_context=True)
-  async def user_info(self, ctx, user="ctx"):
-    if user == "ctx":
+  async def user_info(self, ctx, user: discord.User=None):
+    if user is None:
       user = ctx.message.author
+    embed = discord.Embed(colour=user.colour)
+    if user.bot:
+      embed.set_author(name=f"{user.name}#{user.discriminator} [BOT]", icon_url=user.avatar_url)
     else:
-      for mention in ctx.message.mentions:
-        user = mention
-    await self.bot.say("Soon:tm: {}".format(user.mention))
+      embed.set_author(name=f"{user.name}#{user.discriminator}", icon_url=user.avatar_url)
+    embed.set_thumbnail(url=user.avatar_url)
+    embed.add_field(name="ID", value=user.id)
+    embed.add_field(name="Status", value=self.get_status(user))
+    embed.add_field(name="Registered", value=datetime.strptime(str(user.created_at).split('.')[0], "%Y-%m-%d %X").strftime("%a, %b %e, %Y %I:%M %p"))
+    if user in ctx.message.server.members:
+      embed.add_field(name="Joined", value=datetime.strptime(str(user.joined_at).split('.')[0], "%Y-%m-%d %X").strftime("%a, %b %e, %Y %I:%M %p"))
+      if not user.game is None:
+        embed.add_field(name="Game", value=user.game.name)
+      else:
+        embed.add_field(name="Game", value="None")
+      if not user.nick is None:
+        embed.add_field(name="Nickname", value=user.nick)
+      else:
+        embed.add_field(name="Nickname", value="None")
+      if len(user.roles) > 1:
+        embed.add_field(name="Roles", value=' ,'.join([role.name for role in user.roles if not role.name == "@everyone"]))
+      if len(self.get_permissions(user)) > 0 and not user == ctx.message.server.owner:
+        embed.add_field(name="Permissions", value=' ,'.join(self.get_permissions(user)))
+      elif user == ctx.message.server.owner:
+        embed.add_field(name="Permissions", value="Owner")
+    await self.bot.say(embed=embed)
+
+  @user_info.error
+  async def userinfo_error(self, error, ctx):
+    await self.bot.say(str(error))
 
   @commands.command(name="invite")
   async def bot_invite(self):
