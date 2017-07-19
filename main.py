@@ -1,18 +1,16 @@
 import asyncio
 import json
+import math
 import os
 import sys
+import time
 import traceback
 from datetime import datetime
-import time
-import math
-import requests
-from PIL import ImageDraw
-from PIL import ImageFont
-from PIL import Image
 
 import discord
+import requests
 from discord.ext import commands
+from PIL import Image, ImageDraw, ImageFont
 
 from utils import prettyoutput as po
 
@@ -56,7 +54,7 @@ async def startup():
   await logging("info", "Logging into discord...")
 
 
-async def logging(log_type="none", contents=""):
+async def logging(log_type="none", contents="", no_print=False):
   global config
   try:
     if not config['log_channel_id'] == "" and bot.is_logged_in:
@@ -64,6 +62,7 @@ async def logging(log_type="none", contents=""):
       await bot.send_message(bot.get_channel(config['log_channel_id']), embed=log_embed)
   except NameError:
     pass
+  if no_print: return
   if log_type == "info":
     print(po.info(string=contents, prn_out=False))
   elif log_type == "error":
@@ -160,15 +159,19 @@ async def on_server_join(server):
   config['servers'].append({"id": server.id,"enabled_modules": ["Fun","Misc","Nsfw"],"prefix": config['prefix'],"mod_ids": [],"welcome_channel":server.default_channel.id})
   update_file()
   await update_dbl()
+  slash_n = "\n"
+  await logging("info", f"**I joined a server!**{slash_n}Name: **{server.name}**{slash_n}ID: {server.id}{slash_n}Members: {server.member_count}{slash_n}Bot Servers: {len(bot.servers)}", no_print=True)
 
 @bot.event
 async def on_server_leave(server):
   global config
-  for server in config['servers']:
-    if server['id'] == server.id:
-      config['servers'].remove(server)
+  for this_server in config['servers']:
+    if this_server['id'] == server.id:
+      config['servers'].remove(this_server)
   update_file()
   await update_dbl()
+  slash_n = "\n"
+  await logging("info", f"**I left a server**{slash_n}Name: **{server.name}**{slash_n}ID: {server.id}{slash_n}Members: {server.member_count}{slash_n}Bot Servers: {len(bot.servers)}", no_print=True)
 
 @bot.event
 async def on_member_join(member):

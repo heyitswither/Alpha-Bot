@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 - Need to add future plans
 
+## [0.13.1] - 2017-07-19 ()
+### Added
+- Now logs server join and leave
+
 ## [0.13.0] - 2017-07-18 (10b7d3)
 ### Added
 - serverinfo and userinfo comamnds
