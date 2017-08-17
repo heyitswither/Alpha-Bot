@@ -6,6 +6,7 @@ import os
 import sys
 import json
 import inspect
+import requests
 
 import discord
 from discord.ext import commands

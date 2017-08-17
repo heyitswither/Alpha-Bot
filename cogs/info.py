@@ -104,7 +104,7 @@ class Info:
     info_embed.add_field(name="Bot Users", value=members, inline=True)
     info_embed.add_field(name="Bot Version", value=self.bot.version, inline=True)
     info_embed.add_field(
-        name="Bot Author", value="{0.username}#{0.discriminator}".format([user for user in self.bot.get_all_members() if user.id == "144630969729679360"][0]), inline=True)
+        name="Bot Author", value="{0.name}#{0.discriminator}".format([user for user in self.bot.get_all_members() if user.id == "144630969729679360"][0]), inline=True)
     info_embed.set_thumbnail(url=self.bot.user.avatar_url + "?size=128x128")
     await self.bot.say(embed=info_embed)
 
