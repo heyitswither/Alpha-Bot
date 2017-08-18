@@ -74,5 +74,10 @@ class Misc:
     embed.set_footer(text="About {} results ({} seconds)".format(r['searchInformation']['formattedTotalResults'], r['searchInformation']['formattedSearchTime']))
     await self.bot.say(embed=embed)
 
+  @commands.command(name="savediscordtos")
+  async def savediscordtos(self):
+    embed = discord.Embed(title="Save Discord ToS", description="The Developer Terms of Service have just been updated with a lot of nonsensical clauses that straight up outlaw most bots (mee6, Aethex, spoo.py, all log bots, etc.)\n[Click here to learn more](https://bit.ly/SaveDiscordToS)", url="https://bit.ly/SaveDiscordToS")
+    await self.bot.say(embed=embed)
+
 def setup(bot):
   bot.add_cog(Misc(bot))
