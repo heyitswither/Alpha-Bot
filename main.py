@@ -8,6 +8,7 @@ import traceback
 from datetime import datetime
 
 import discord
+import pathvalidate
 import requests
 from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
@@ -16,16 +17,17 @@ from utils import prettyoutput as po
 
 start_time = time.time()
 
+
 def get_prefix(bot, message):
   try:
     with open('config.json') as file_in:
       local_config = json.load(file_in)
   except FileNotFoundError:
     return ""
-  if message.content.startswith('{} '.format(message.server.me.mention)):
-    return '{0.me.mention} '.format(message.server)
-  elif message.content.startswith('{} '.format(bot.user.mention)):
-    return '{0.user.mention} '.format(bot)
+  if message.content.startswith(f'{message.server.me.mention} '):
+    return f'{message.server.me.mention} '
+  elif message.content.startswith(f'{bot.user.mention} '):
+    return f'{bot.user.mention} '.format(bot)
   if not message.server:
     return local_config['prefix']
   if not message.mentions == []:
@@ -36,6 +38,7 @@ def get_prefix(bot, message):
     if server['id'] == message.server.id:
       return server['prefix']
 
+
 try:
   description = "Alpha, the everything in one discord bot"
   bot = commands.Bot(command_prefix=get_prefix, description=description)
@@ -45,24 +48,24 @@ try:
 except FileNotFoundError:
   pass
 
+
 async def startup():
-  global config
-  config = await import_config()
-  if config['log_channel_id'] == "":
+  bot.config = await import_config()
+  if bot.config['log_channel_id'] == "":
     await logging(
         "info", "No log channel set, all status messages will be printed to the console.")
   await logging("info", "Logging into discord...")
 
 
 async def logging(log_type="none", contents="", no_print=False):
-  global config
   try:
-    if not config['log_channel_id'] == "" and bot.is_logged_in:
+    if not bot.config['log_channel_id'] == "" and bot.is_logged_in:
       log_embed = discord.Embed(description=contents, timestamp=datetime.now())
-      await bot.send_message(bot.get_channel(config['log_channel_id']), embed=log_embed)
-  except NameError:
+      await bot.send_message(bot.get_channel(bot.config['log_channel_id']), embed=log_embed)
+  except:
     pass
-  if no_print: return
+  if no_print:
+    return
   if log_type == "info":
     print(po.info(string=contents, prn_out=False))
   elif log_type == "error":
@@ -76,9 +79,8 @@ async def logging(log_type="none", contents="", no_print=False):
 
 
 def update_file():
-  global config
   with open('config.json', 'w') as fileOut:
-    json.dump(config, fileOut, indent=2, sort_keys=True)
+    json.dump(bot.config, fileOut, indent=2, sort_keys=True)
 
 
 async def import_config():
@@ -89,7 +91,8 @@ async def import_config():
   except FileNotFoundError:
     await logging("error", "Config file not found, creating...")
     with open('config.json', 'w+') as file_out:
-      config_temp = {"token": "", "admin_ids": [""], "servers": [], "log_channel_id": "", "prefix": "", "dbl-token": ""}
+      config_temp = {"token": "", "admin_ids": [""], "servers": [
+      ], "log_channel_id": "", "prefix": "", "dbl-token": ""}
       json.dump(config_temp, file_out, indent=2, sort_keys=True)
     await logging("error", "Please put your bot's information in config.json")
     sys.exit()
@@ -103,22 +106,15 @@ async def add_cogs():
       startup_extensions.append("cogs." + cog.split('.')[0])
   return startup_extensions
 
-async def update_dbl():
-  if not config['dbl-token'] == "":
-    dump = {'server_count': len(bot.servers)}
-    head = {'authorization': ''.format(config['dbl-token']), 'content-type': 'application/json'}
-    url = 'https://discordbots.org/api/bots/{}/stats'.format(bot.user.id)
-    requests.post(url, data=dump, headers=head)
 
 @bot.event
 async def on_ready():
-  global config
   global start_time
-  if not config['log_channel_id'] == "":
+  if not bot.config['log_channel_id'] == "":
     try:
-      await logging("info", 'Console messages will be send to channel #{} \n\t\t({}) in {} ({})'.format(bot.get_channel(config['log_channel_id']).name, bot.get_channel(config['log_channel_id']).id, bot.get_channel(config['log_channel_id']).server.name, bot.get_channel(config['log_channel_id']).server.id))
+      await logging("info", 'Console messages will be send to channel #{} \n\t\t({}) in {} ({})'.format(bot.get_channel(bot.config['log_channel_id']).name, bot.get_channel(bot.config['log_channel_id']).id, bot.get_channel(bot.config['log_channel_id']).server.name, bot.get_channel(bot.config['log_channel_id']).server.id))
     except AttributeError:
-      config['log_channel_id'] = ""
+      bot.config['log_channel_id'] = ""
       await logging("error", "The bot cannot access the log channel")
   await logging("success", 'Successfully logged into discord as\n\t\t{}#{} ({})'.format(bot.user.name, bot.user.discriminator, bot.user.id))
 
@@ -134,16 +130,15 @@ async def on_ready():
   await logging("success", "All extensions loaded")
 
   for server in bot.servers:
-    if not server.id in [server['id'] for server in config['servers']]:
-      config['servers'].append({"id": server.id,"enabled_modules": ["Fun","Misc","Nsfw"],"prefix": config['prefix'],"mod_ids": [],"welcome_channel":server.default_channel.id})
+    if not server.id in [server['id'] for server in bot.config['servers']]:
+      bot.config['servers'].append({"id": server.id, "enabled_modules": [
+                                   "Fun", "Misc", "Nsfw"], "prefix": bot.config['prefix'], "mod_ids": [], "welcome_channel": server.default_channel.id})
       update_file()
 
-  for server in config['servers']:
+  for server in bot.config['servers']:
     if not server['id'] in [server.id for server in bot.servers]:
-      config['servers'].remove(server)
+      bot.config['servers'].remove(server)
       update_file()
-
-  await update_dbl()
 
   end_time = time.time() - start_time
   await logging("info", "Started in {} seconds ({} ms)".format(math.floor(end_time), math.floor(end_time * 1000)))
@@ -153,106 +148,110 @@ async def on_ready():
 async def on_message(message):
   await bot.process_commands(message)
 
+
 @bot.event
 async def on_server_join(server):
-  global config
-  config['servers'].append({"id": server.id,"enabled_modules": ["Fun","Misc","Nsfw"],"prefix": config['prefix'],"mod_ids": [],"welcome_channel":server.default_channel.id})
+  bot.config['servers'].append({"id": server.id, "enabled_modules": ["Fun", "Misc", "Nsfw"],
+                                "prefix": bot.config['prefix'], "mod_ids": [], "welcome_channel": server.default_channel.id})
   update_file()
-  await update_dbl()
   slash_n = "\n"
   await logging("info", f"**I joined a server!**{slash_n}Name: **{server.name}**{slash_n}ID: {server.id}{slash_n}Members: {server.member_count}{slash_n}Bot Servers: {len(bot.servers)}", no_print=True)
 
+
 @bot.event
 async def on_server_leave(server):
-  global config
-  for this_server in config['servers']:
+  for this_server in bot.config['servers']:
     if this_server['id'] == server.id:
-      config['servers'].remove(this_server)
+      bot.config['servers'].remove(this_server)
   update_file()
-  await update_dbl()
   slash_n = "\n"
   await logging("info", f"**I left a server**{slash_n}Name: **{server.name}**{slash_n}ID: {server.id}{slash_n}Members: {server.member_count}{slash_n}Bot Servers: {len(bot.servers)}", no_print=True)
 
+
 @bot.event
 async def on_member_join(member):
-  global config
-  with open('config.json', 'r') as file_in:
-    config = json.load(file_in)
-  if not "Welcome" in [server['enabled_modules'] for server in config['servers'] if server['id'] == member.server.id][0]: return
+  if not "Welcome" in [server['enabled_modules'] for server in bot.config['servers'] if server['id'] == member.server.id][0]:
+    return
   template = Image.open('extras/template.png')
   draw = ImageDraw.Draw(template)
   user = member.name
   server = member.server.name
   img_fraction = 0.50
   fontsize = 16
+  member_name = pathvalidate.sanitize_filename(
+      member.name).replace('(', '').replace(')', '').replace(' ', '')
+  server_name = pathvalidate.sanitize_filename(
+      member.server.name).replace('(', '').replace(')', '').replace(' ', '')
   if member.avatar_url == "":
     member_avatar = requests.get(member.default_avatar_url)
   else:
     member_avatar = requests.get(member.avatar_url)
-  with open('extras/{}.png'.format(member.name), 'wb') as f:
+  with open('extras/{}.png'.format(member_name), 'wb') as f:
     for chunk in member_avatar.iter_content(chunk_size=1024):
       if chunk:
         f.write(chunk)
-  member_avatar = Image.open('extras/{}.png'.format(member.name))
+  member_avatar = Image.open('extras/{}.png'.format(member_name))
   member_avatar = member_avatar.resize((182, 182), Image.ANTIALIAS)
   template.paste(member_avatar, (34, 71))
   guild_icon = requests.get(member.server.icon_url)
-  with open('extras/{}.png'.format(member.server.name), 'wb') as f:
+  with open('extras/{}.png'.format(server_name), 'wb') as f:
     for chunk in guild_icon.iter_content(chunk_size=1024):
       if chunk:
         f.write(chunk)
-  guild_icon = Image.open('extras/{}.png'.format(member.server.name))
+  guild_icon = Image.open('extras/{}.png'.format(server_name))
   guild_icon = guild_icon.resize((64, 64), Image.ANTIALIAS)
   template.paste(guild_icon, (660, 300))
   font = ImageFont.truetype("extras/segoeui.ttf", fontsize)
-  while font.getsize(user)[0] < img_fraction*template.size[0]:
+  while font.getsize(user)[0] < img_fraction * template.size[0]:
     fontsize += 1
     font = ImageFont.truetype("extras/segoeui.ttf", fontsize)
   fontsize -= 1
   font = ImageFont.truetype("extras/segoeui.ttf", fontsize)
   if len(user) < 6:
     font = ImageFont.truetype("extras/segoeui.ttf", 58)
-  draw.text((125,290),user,(0,0,0),font=font)
+  draw.text((125, 290), user, (0, 0, 0), font=font)
 
   fontsize = 16
   img_fraction = 0.25
   font = ImageFont.truetype("extras/segoeui.ttf", fontsize)
-  while font.getsize(server)[0] < img_fraction*template.size[0]:
+  while font.getsize(server)[0] < img_fraction * template.size[0]:
     fontsize += 1
     font = ImageFont.truetype("extras/segoeui.ttf", fontsize)
   fontsize -= 1
   font = ImageFont.truetype("extras/segoeui.ttf", fontsize)
   if len(server) < 6:
     font = ImageFont.truetype("extras/segoeui.ttf", 32)
-  draw.text((540,255),server,(0,0,0),font=font)
+  draw.text((540, 255), server, (0, 0, 0), font=font)
 
   template.save('extras/finished.png')
-  await bot.send_file(member.server.get_channel([server['welcome_channel'] for server in config['servers'] if server['id'] == member.server.id][0]), 'extras/finished.png')
+  await bot.send_file(member.server.get_channel([server['welcome_channel'] for server in bot.config['servers'] if server['id'] == member.server.id][0]), 'extras/finished.png')
   os.remove('extras/finished.png')
-  os.remove('extras/{}.png'.format(member.name))
-  os.remove('extras/{}.png'.format(member.server.name))
+  os.remove('extras/{}.png'.format(member_name))
+  os.remove('extras/{}.png'.format(server_name))
+
 
 @bot.command(name="reload", hidden=True, pass_context=True)
 async def reload_module(ctx, module):
-  global config
-  if ctx.message.author.id in config['admin_ids']:
-    bot.unload_extension(module)
-    try:
-      bot.load_extension(module)
-    except Exception as e:
-      await bot.say(type(e).__name__ + ": " + str(e))
-      await logging("error", type(e).__name__ + ": " + str(e))
-    else:
-      await bot.say('Module {} reloaded!'.format(module))
-      await logging("info", "Module {} reloaded".format(module))
+  if not ctx.message.author.id in bot.config['admin_ids']:
+    return
+  bot.unload_extension(module)
+  try:
+    bot.load_extension(module)
+  except Exception as e:
+    await bot.say(type(e).__name__ + ": " + str(e))
+    await logging("error", type(e).__name__ + ": " + str(e))
+  else:
+    await bot.say('Module {} reloaded!'.format(module))
+    await logging("info", "Module {} reloaded".format(module))
 
 
 @bot.command("unload", hidden=True, pass_context=True)
 async def unload_module(ctx, module):
-  if ctx.message.author.id in config['admin_ids']:
-    bot.unload_extension(module)
-    await bot.say('Module {} unloaded!'.format(module))
-    await logging("info", "Module {} unloaded".format(module))
+  if not ctx.message.author.id in bot.config['admin_ids']:
+    return
+  bot.unload_extension(module)
+  await bot.say('Module {} unloaded!'.format(module))
+  await logging("info", "Module {} unloaded".format(module))
 
 
 @bot.event
@@ -271,7 +270,7 @@ if __name__ == '__main__':
   loop = asyncio.get_event_loop()
   loop.run_until_complete(asyncio.gather(startup()))
   try:
-    bot.run(config['token'])
+    bot.run(bot.config['token'])
   except discord.errors.LoginFailure as e:
     print(str(e))
     sys.exit()

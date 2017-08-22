@@ -102,7 +102,8 @@ class Info:
     for member in self.bot.get_all_members():
       members += 1
     info_embed.add_field(name="Bot Users", value=members, inline=True)
-    info_embed.add_field(name="Bot Version", value=self.bot.version, inline=True)
+    info_embed.add_field(
+        name="Bot Version", value=self.bot.version, inline=True)
     info_embed.add_field(
         name="Bot Author", value="{0.name}#{0.discriminator}".format([user for user in self.bot.get_all_members() if user.id == "144630969729679360"][0]), inline=True)
     info_embed.set_thumbnail(url=self.bot.user.avatar_url + "?size=128x128")
@@ -116,16 +117,16 @@ class Info:
     embed.set_thumbnail(url=server.icon_url)
     embed.add_field(name="ID", value=server.id)
     embed.add_field(name="Region", value=self.get_region(server))
-    embed.add_field(name="Members", value=f'{len([member for member in server.members if member.status == discord.Status.online])}/{server.member_count}')
-    embed.add_field(name="Text Channels", value=len([channel for channel in server.channels if channel.type == discord.ChannelType.text]))
-    embed.add_field(name="Voice Channels", value=len([channel for channel in server.channels if channel.type == discord.ChannelType.voice]))
+    embed.add_field(
+        name="Members", value=f'{len([member for member in server.members if member.status == discord.Status.online])}/{server.member_count}')
+    embed.add_field(name="Text Channels", value=len(
+        [channel for channel in server.channels if channel.type == discord.ChannelType.text]))
+    embed.add_field(name="Voice Channels", value=len(
+        [channel for channel in server.channels if channel.type == discord.ChannelType.voice]))
     embed.add_field(name="Roles", value=len(server.roles) - 1)
-    embed.add_field(name="Owner", value=f'{server.owner.name}#{server.owner.discriminator}')
+    embed.add_field(
+        name="Owner", value=f'{server.owner.name}#{server.owner.discriminator}')
     await self.bot.say(embed=embed)
-
-  @server_info.error
-  async def serverinfo_error(self, error, ctx):
-    pass
 
   @commands.command(name="userinfo", pass_context=True)
   async def user_info(self, ctx, user: discord.User=None):
@@ -133,15 +134,19 @@ class Info:
       user = ctx.message.author
     embed = discord.Embed(colour=user.colour)
     if user.bot:
-      embed.set_author(name=f"{user.name}#{user.discriminator} [BOT]", icon_url=user.avatar_url)
+      embed.set_author(
+          name=f"{user.name}#{user.discriminator} [BOT]", icon_url=user.avatar_url)
     else:
-      embed.set_author(name=f"{user.name}#{user.discriminator}", icon_url=user.avatar_url)
+      embed.set_author(
+          name=f"{user.name}#{user.discriminator}", icon_url=user.avatar_url)
     embed.set_thumbnail(url=user.avatar_url)
     embed.add_field(name="ID", value=user.id)
     embed.add_field(name="Status", value=self.get_status(user))
-    embed.add_field(name="Registered", value=datetime.strptime(str(user.created_at).split('.')[0], "%Y-%m-%d %X").strftime("%a, %b %e, %Y %I:%M %p"))
+    embed.add_field(name="Registered", value=datetime.strptime(str(
+        user.created_at).split('.')[0], "%Y-%m-%d %X").strftime("%a, %b %e, %Y %I:%M %p"))
     if user in ctx.message.server.members:
-      embed.add_field(name="Joined", value=datetime.strptime(str(user.joined_at).split('.')[0], "%Y-%m-%d %X").strftime("%a, %b %e, %Y %I:%M %p"))
+      embed.add_field(name="Joined", value=datetime.strptime(str(user.joined_at).split(
+          '.')[0], "%Y-%m-%d %X").strftime("%a, %b %e, %Y %I:%M %p"))
       if not user.game is None:
         embed.add_field(name="Game", value=user.game.name)
       else:
@@ -151,16 +156,14 @@ class Info:
       else:
         embed.add_field(name="Nickname", value="None")
       if len(user.roles) > 1:
-        embed.add_field(name="Roles", value=', '.join([role.name for role in user.roles if not role.name == "@everyone"]))
+        embed.add_field(name="Roles", value=', '.join(
+            [role.name for role in user.roles if not role.name == "@everyone"]))
       if len(self.get_permissions(user)) > 0 and not user == ctx.message.server.owner:
-        embed.add_field(name="Permissions", value=', '.join(self.get_permissions(user)))
+        embed.add_field(name="Permissions", value=', '.join(
+            self.get_permissions(user)))
       elif user == ctx.message.server.owner:
         embed.add_field(name="Permissions", value="Owner")
     await self.bot.say(embed=embed)
-
-  @user_info.error
-  async def userinfo_error(self, error, ctx):
-    await self.bot.say(str(error))
 
   @commands.command(name="invite")
   async def bot_invite(self):
@@ -173,7 +176,8 @@ class Info:
     """
     suggestion = ' '.join(suggestion)
     embed = discord.Embed(title="New Suggestion", description=suggestion)
-    embed.set_author(name=ctx.message.author.name + "#" + ctx.message.author.discriminator + " (" + ctx.message.author.id + ")", icon_url=ctx.message.author.avatar_url)
+    embed.set_author(name=ctx.message.author.name + "#" + ctx.message.author.discriminator +
+                     " (" + ctx.message.author.id + ")", icon_url=ctx.message.author.avatar_url)
     await self.bot.send_message(self.bot.get_server('197780624688414720').get_channel('332616763294613505'), embed=embed)
 
   @commands.command(name="msgowner", pass_context=True)
@@ -183,7 +187,8 @@ class Info:
     """
     msg = ' '.join(msg)
     embed = discord.Embed(title="New Message", description=msg)
-    embed.set_author(name=ctx.message.author.name + "#" + ctx.message.author.discriminator + " (" + ctx.message.author.id + ")", icon_url=ctx.message.author.avatar_url)
+    embed.set_author(name=ctx.message.author.name + "#" + ctx.message.author.discriminator +
+                     " (" + ctx.message.author.id + ")", icon_url=ctx.message.author.avatar_url)
     await self.bot.send_message([user for user in self.bot.get_all_members() if user.id == "144630969729679360"][0], embed=embed)
 
 

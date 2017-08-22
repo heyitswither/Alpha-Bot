@@ -1,11 +1,13 @@
 """
 miscellaneous commands that may or may not be useful
 """
-import discord
-from discord.ext import commands
-import time
 import json
+import time
+
+import discord
 import requests
+from discord.ext import commands
+
 
 class Misc:
   def __init__(self, bot_):
@@ -50,7 +52,8 @@ class Misc:
 
   @commands.command(name="ping", pass_context=True)
   async def ping_command(self, ctx):
-    if not self.module_check(ctx): return
+    if not self.module_check(ctx):
+      return
     pingtime = time.time()
     pingms = await self.bot.say("Pinging...")
     ping = (time.time() - pingtime) * 1000
@@ -58,26 +61,27 @@ class Misc:
 
   @commands.command(name="google", pass_context=True)
   async def google(self, ctx, *query):
-    if not self.module_check(ctx): return
-    r = requests.get('https://www.googleapis.com/customsearch/v1?key=AIzaSyDu7_tL50kfEcegjXnYqfBxXrKqBrknkkY&cx=013036536707430787589:_pqjad5hr1a&q={}&alt=json'.format(' '.join(query)))
+    if not self.module_check(ctx):
+      return
+    r = requests.get(
+        'https://www.googleapis.com/customsearch/v1?key=AIzaSyDu7_tL50kfEcegjXnYqfBxXrKqBrknkkY&cx=013036536707430787589:_pqjad5hr1a&q={}&alt=json'.format(' '.join(query)))
     r = json.loads(r.text)
     try:
-      embed = discord.Embed(title=r['items'][0]['title'], description="{}\n\n[View More Results](https://www.google.com/search?q={})".format(r['items'][0]['snippet'], ' '.join(query).replace(' ', '+')), url=r['items'][0]['link'])
+      embed = discord.Embed(title=r['items'][0]['title'], description="{}\n\n[View More Results](https://www.google.com/search?q={})".format(
+          r['items'][0]['snippet'], ' '.join(query).replace(' ', '+')), url=r['items'][0]['link'])
     except KeyError:
       embed = discord.Embed(title=":warning: No results found")
     try:
       embed.set_image(url=r['items'][0]['pagemap']['cse_thumbnail'][0]['src'])
     except KeyError:
       pass
-    embed.set_author(name="{} - Google Search".format(' '.join(query)), icon_url='https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1000px-Google_%22G%22_Logo.svg.png')
+    embed.set_author(name="{} - Google Search".format(' '.join(query)),
+                     icon_url='https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1000px-Google_%22G%22_Logo.svg.png')
 
-    embed.set_footer(text="About {} results ({} seconds)".format(r['searchInformation']['formattedTotalResults'], r['searchInformation']['formattedSearchTime']))
+    embed.set_footer(text="About {} results ({} seconds)".format(
+        r['searchInformation']['formattedTotalResults'], r['searchInformation']['formattedSearchTime']))
     await self.bot.say(embed=embed)
 
-  @commands.command(name="savediscordtos")
-  async def savediscordtos(self):
-    embed = discord.Embed(title="Save Discord ToS", description="The Developer Terms of Service have just been updated with a lot of nonsensical clauses that straight up outlaw most bots (mee6, Aethex, spoo.py, all log bots, etc.)\n[Click here to learn more](https://bit.ly/SaveDiscordToS)", url="https://bit.ly/SaveDiscordToS")
-    await self.bot.say(embed=embed)
 
 def setup(bot):
   bot.add_cog(Misc(bot))
