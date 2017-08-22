@@ -1,12 +1,12 @@
 import asyncio
-import traceback
-import threading
 import concurrent.futures
+import threading
+import traceback
 from random import shuffle
 
-from discord.ext import commands
-from discord import opus
+import discord
 import youtube_dl
+from discord.ext import commands
 
 
 class Song:
@@ -141,7 +141,8 @@ class VoiceClient:
 
 class Voice:
     def __init__(self, bot_):
-        #opus.load_opus("extras/opus.so")
+        if not discord.opus.is_loaded():
+          discord.opus.load_opus("extras/opus.so")
         self.bot = bot_
         self.voice_clients = {}
         if self.bot.voice_reload_cache is not None:
