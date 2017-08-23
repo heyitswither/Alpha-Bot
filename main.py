@@ -132,7 +132,7 @@ async def on_ready():
   for server in bot.servers:
     if not server.id in [server['id'] for server in bot.config['servers']]:
       bot.config['servers'].append({"id": server.id, "enabled_modules": [
-                                   "Fun", "Misc", "Nsfw"], "prefix": bot.config['prefix'], "mod_ids": [], "welcome_channel": server.default_channel.id})
+                                   "Fun", "Misc", "Nsfw"], "prefix": bot.config['prefix'], "mod_ids": [], "welcome_channel": server.id})
       update_file()
 
   for server in bot.config['servers']:
@@ -152,7 +152,7 @@ async def on_message(message):
 @bot.event
 async def on_server_join(server):
   bot.config['servers'].append({"id": server.id, "enabled_modules": ["Fun", "Misc", "Nsfw"],
-                                "prefix": bot.config['prefix'], "mod_ids": [], "welcome_channel": server.default_channel.id})
+                                "prefix": bot.config['prefix'], "mod_ids": [], "welcome_channel": server.id})
   update_file()
   slash_n = "\n"
   await logging("info", f"**I joined a server!**{slash_n}Name: **{server.name}**{slash_n}ID: {server.id}{slash_n}Members: {server.member_count}{slash_n}Bot Servers: {len(bot.servers)}", no_print=True)
