@@ -3,3 +3,4 @@ youtube_dl
 pillow
 requests
 pathvalidate
+pynacl
