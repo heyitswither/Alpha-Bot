@@ -174,6 +174,9 @@ class Info:
     """
     suggest a new feature for the bot
     """
+    if not suggestion:
+      await self.bot.reply("You must provide a suggestion.")
+      return
     suggestion = ' '.join(suggestion)
     embed = discord.Embed(title="New Suggestion", description=suggestion)
     embed.set_author(name=ctx.message.author.name + "#" + ctx.message.author.discriminator +
