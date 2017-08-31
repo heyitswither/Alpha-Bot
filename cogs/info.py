@@ -175,13 +175,13 @@ class Info:
     suggest a new feature for the bot
     """
     if not suggestion:
-      await self.bot.reply("You must provide a suggestion.")
-      return
+      return await self.bot.reply("You must provide a suggestion.")
     suggestion = ' '.join(suggestion)
     embed = discord.Embed(title="New Suggestion", description=suggestion)
     embed.set_author(name=ctx.message.author.name + "#" + ctx.message.author.discriminator +
                      " (" + ctx.message.author.id + ")", icon_url=ctx.message.author.avatar_url)
     await self.bot.send_message(self.bot.get_server('197780624688414720').get_channel('332616763294613505'), embed=embed)
+    await self.bot.say('Thanks for your suggestion! :smile:')
 
   @commands.command(name="msgowner", pass_context=True)
   async def msg_owner(self, ctx, *msg):
