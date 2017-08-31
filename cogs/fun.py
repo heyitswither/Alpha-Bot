@@ -44,6 +44,8 @@ class Fun:
     if ctx.message.author.id in self.config['admin_ids']:
       await self.bot.say(' '.join(message))
     else:
+      if '@everyone' or '@here' in message:
+        message = message.replace('@', 'at')
       await self.bot.say(ctx.message.author.mention + " said: " + ' '.join(message))
 
   @commands.command(name="urban", pass_context=True)
