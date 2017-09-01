@@ -2,9 +2,11 @@
 server moderation tools
 """
 
+import json
+
 import discord
 from discord.ext import commands
-import json
+
 
 class Mod:
   def __init__(self, bot_):
@@ -53,7 +55,7 @@ class Mod:
       await self.bot.say("I require the `Kick Members` permission")
     else:
       await self.bot.say("{} has been kicked".format(user.mention))
-  
+
   @commands.command(name="ban", pass_context=True)
   async def ban(self, ctx, user: discord.User):
     """
@@ -66,6 +68,18 @@ class Mod:
       await self.bot.say("I require the `Ban Members` permission")
     else:
       await self.bot.say("{} has been banned".format(user.mention))
+
+  @commands.command(name="hackban", pass_context=True)
+  async def hackban(self, ctx, user: str):
+    if not user:
+      return await self.bot.say("You must provide a user id to ban")
+    try:
+      await self.bot.http.ban(user, ctx.message.server.id)
+    except discord.errors.NotFound:
+      return await self.bot.reply("I could not find the user you are trying to ban")
+    except discord.errors.Forbidden:
+      return await self.bot.reply("I require the `Ban Members` permission")
+    await self.bot.reply("The user has been banned")
 
 def setup(bot):
   bot.add_cog(Mod(bot))
