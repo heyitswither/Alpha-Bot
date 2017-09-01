@@ -70,7 +70,8 @@ class Mod:
       await self.bot.say("{} has been banned".format(user.mention))
 
   @commands.command(name="hackban", pass_context=True)
-  async def hackban(self, ctx, user: str):
+  async def hackban(self, ctx, user: str = None):
+    if not self.is_mod(ctx): return
     if not user:
       return await self.bot.say("You must provide a user id to ban")
     try:
