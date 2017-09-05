@@ -45,7 +45,7 @@ class Fun:
       await self.bot.say(' '.join(message))
     else:
       if '@everyone' or '@here' in message:
-        message = ' '.join(message).replace('@', 'at')
+        message = ' '.join(message).replace('@', 'at ')
         return await self.bot.say(ctx.message.author.mention + " said: " + message)
       await self.bot.say(ctx.message.author.mention + " said: " + ' '.join(message))
 
