@@ -172,6 +172,7 @@ async def on_server_leave(server):
 async def on_member_join(member):
   if not "Welcome" in [server['enabled_modules'] for server in bot.config['servers'] if server['id'] == member.server.id][0]:
     return
+  has_icon = True if not member.server.icon_url == '' else False
   template = Image.open('extras/template.png')
   draw = ImageDraw.Draw(template)
   user = member.name
@@ -180,8 +181,9 @@ async def on_member_join(member):
   fontsize = 16
   member_name = pathvalidate.sanitize_filename(
       member.name).replace('(', '').replace(')', '').replace(' ', '')
-  server_name = pathvalidate.sanitize_filename(
-      member.server.name).replace('(', '').replace(')', '').replace(' ', '')
+  if has_icon:
+    server_name = pathvalidate.sanitize_filename(
+        member.server.name).replace('(', '').replace(')', '').replace(' ', '')
   if member.avatar_url == "":
     member_avatar = requests.get(member.default_avatar_url)
   else:
@@ -193,14 +195,16 @@ async def on_member_join(member):
   member_avatar = Image.open('extras/{}.png'.format(member_name))
   member_avatar = member_avatar.resize((182, 182), Image.ANTIALIAS)
   template.paste(member_avatar, (34, 71))
-  guild_icon = requests.get(member.server.icon_url)
-  with open('extras/{}.png'.format(server_name), 'wb') as f:
-    for chunk in guild_icon.iter_content(chunk_size=1024):
-      if chunk:
-        f.write(chunk)
-  guild_icon = Image.open('extras/{}.png'.format(server_name))
-  guild_icon = guild_icon.resize((64, 64), Image.ANTIALIAS)
-  template.paste(guild_icon, (660, 300))
+  if has_icon:
+    guild_icon = requests.get(member.server.icon_url)
+    with open('extras/{}.png'.format(server_name), 'wb') as f:
+      for chunk in guild_icon.iter_content(chunk_size=1024):
+        if chunk:
+          f.write(chunk)
+    guild_icon = Image.open('extras/{}.png'.format(server_name))
+    guild_icon = guild_icon.resize((64, 64), Image.ANTIALIAS)
+    template.paste(guild_icon, (660, 300))
+
   font = ImageFont.truetype("extras/segoeui.ttf", fontsize)
   while font.getsize(user)[0] < img_fraction * template.size[0]:
     fontsize += 1
