@@ -170,6 +170,8 @@ async def on_server_leave(server):
 
 @bot.event
 async def on_member_join(member):
+  with open('config.json', 'r') as file_in:
+    bot.config = json.load(file_in)
   if not "Welcome" in [server['enabled_modules'] for server in bot.config['servers'] if server['id'] == member.server.id][0]:
     return
   has_icon = True if not member.server.icon_url == '' else False
