@@ -3,6 +3,7 @@ import concurrent.futures
 import threading
 import traceback
 from random import shuffle
+import json
 
 import discord
 import youtube_dl
@@ -109,7 +110,7 @@ class VoiceClient:
                 await self.bot.join_voice_channel(self.channel)
             except concurrent.futures._base.TimeoutError:
                 await self.bot.say(
-                    "Well, that's an error. I _think_ doing [l will fix it, though\nFeel free to contact me about this")
+                    "Well, that's an error. I _think_ doing %l will fix it, though\nFeel free to contact me about this")
 
         if not playlist:
             player = await self.client.create_ytdl_player(name, ytdl_options=options, before_options='-help')
@@ -148,6 +149,8 @@ class Voice:
         if self.bot.voice_reload_cache is not None:
             self.voice_clients = self.bot.voice_reload_cache.copy()
             self.bot.voice_reload_cache = None
+        with open('config.json', 'r') as file_in:
+            self.config = json.load(file_in)
 
     def __unload(self):
         self.bot.voice_reload_cache = self.voice_clients
@@ -218,7 +221,7 @@ class Voice:
             return
 
         song = voice.queue[int(number) - 1]
-        if song.user != context.message.author:
+        if song.user != context.message.author or not context.message.author.id in self.config['admin_ids']:
             await self.bot.say("You can't stop the music~~\n(you're not the person who put this on)")
             return None
         await self.bot.say("Removed `{}` from the queue".format(song.title))
@@ -243,10 +246,10 @@ class Voice:
 
         if voice.player and voice.player.is_playing():
             for song in voice.queue:
-                if song.user != context.message.author:
+                if song.user != context.message.author or not context.message.author.id in self.config['admin_ids']:
                     await self.bot.say("You can't stop the music~~\n(someone else still has something queued)")
                     return None
-            if voice.current_song.user != context.message.author:
+            if voice.current_song.user != context.message.author or not context.message.author.id in self.config['admin_ids']:
                 await self.bot.say("You can't stop the music~~\n(someone else is playing something)")
                 return None
 
@@ -263,19 +266,6 @@ class Voice:
             await self.bot.say("Don't worry, the currently playing silence is already looping (use [play)")
             return
         await voice.add_to_queue(voice.current_song.url, context.message, True)
-
-    @commands.command(name="volume", aliases=['v'], pass_context=True)
-    async def voice_volume(self, context, volume: int):
-        voice = self.voice_clients.get(context.message.server.id)
-        if not voice:
-            await self.bot.say("Can't change the volume of nothing (use [play)")
-            return
-
-        if voice.current_song.user != context.message.author and volume < 20:
-            await self.bot.say("You can't change the volume rn, it's not your song")
-            return
-        voice.volume = volume / 100
-        voice.player.volume = volume / 100
 
     @commands.command(name="playlist", aliases=['pp'], pass_context=True)
     async def voice_playlist(self, context, *song: str):
