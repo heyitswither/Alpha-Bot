@@ -188,7 +188,9 @@ class Voice:
             await self.bot.say("B-b-but I haven't even got started... (use [play)")
             return
 
-        if voice.current_song.user != context.message.author:
+        if context.message.author.id in self.config['admin_ids']:
+            pass
+        elif voice.current_song.user != context.message.author:
             await self.bot.say("You can't stop the music~~\n(you're not the person who put this on)")
             return None
         voice.player.stop()
@@ -221,7 +223,9 @@ class Voice:
             return
 
         song = voice.queue[int(number) - 1]
-        if song.user != context.message.author or not context.message.author.id in self.config['admin_ids']:
+        if context.message.author.id in self.config['admin_ids']:
+            pass
+        elif song.user != context.message.author:
             await self.bot.say("You can't stop the music~~\n(you're not the person who put this on)")
             return None
         await self.bot.say("Removed `{}` from the queue".format(song.title))
@@ -246,10 +250,14 @@ class Voice:
 
         if voice.player and voice.player.is_playing():
             for song in voice.queue:
-                if song.user != context.message.author or not context.message.author.id in self.config['admin_ids']:
+                if context.message.author.id in self.config['admin_ids']:
+                    pass
+                elif song.user != context.message.author:
                     await self.bot.say("You can't stop the music~~\n(someone else still has something queued)")
                     return None
-            if voice.current_song.user != context.message.author or not context.message.author.id in self.config['admin_ids']:
+            if context.message.author.id in self.config['admin_ids']:
+                pass
+            elif voice.current_song.user != context.message.author:
                 await self.bot.say("You can't stop the music~~\n(someone else is playing something)")
                 return None
 
