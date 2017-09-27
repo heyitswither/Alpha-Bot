@@ -16,6 +16,8 @@ Everything in one discord bot, written in discord.py
 4. Edit the generated config.json file with your settings
 5. Then you can run `main.py` normally
 
+(Note: the 'servers' key in the config.json file is not meant to be touched, the bot will put info in there. Once I move Alpha to using a database, this shouldn become less confusing.)
+
 ## Cogs
 
 - [Here is a guide to writing your own cogs](https://twentysix26.github.io/Red-Docs/red_guide_make_cog/)
